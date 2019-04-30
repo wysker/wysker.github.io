@@ -1,0 +1,51 @@
+## Search [/search]
+### Find stories or streams by keywords [GET /search{?query}]
+
+Returns stories or streams that match the specified keywords.
+
++ Parameters
+    + query (string) - The search query
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + query (string) - The query for which the results are being returned
+        + results (array[SearchResult]) - The search results
+        + next (string) - URL to be used to fetch the next batch of results
+    + Body
+
+            {
+                "query": "sneakers",
+                "results": [
+                    {
+                      "id": "Wyv",
+                      "url": "https://api.wysker.com/v9/nodes/Wyv?query=sneakers",
+                      "displayName": "🍉\nDamn Chunky Sneakers",
+                      "type": "story",
+                      "media": {
+                        "titleImage": "https://cdn.wysker.com/stories/181/cover/pw8rJJuiBR8H.jpg"
+                      },
+                      "placeholder": {
+                        "from": "#ff8145",
+                        "to": "#fe34c5"
+                      },
+                      "published": "2018-05-17T13:08:12.386Z",
+                      "author": {
+                        "alias": "@alicejoyce",
+                        "avatar": "https://cdn.wysker.com/avatars/34.jpg"
+                      },
+                      "imageCopyright": {
+                        "title": "© Unsplash",
+                        "link": "https://unsplash.com/photos/jj-TLWCWpck"
+                      },
+                      "itemCount": 84,
+                      "statistics": {
+                        "viewed": 8678,
+                        "storyShared": 4083,
+                        "shared": 1317
+                      },
+                      "shareLink": "https://wysker.com/Wyv"
+                    },
+                    ...
+                ],
+                "next": "https://api.wysker.com/..."
+            }

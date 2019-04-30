@@ -1,0 +1,51 @@
+## Widgets [/widgets]
+Widgets are interactive elements that are displayed when a widget-notification is expanded. Widgets typically consist of multiple pages (or views) and the user is typically asked to answer a question in each of them. Whenever the user makes a choice, a `callback`-URL needs to be invoked (providing a user access token) and the next page can be shown.  When the last page has been reached, the widget is closed and the notification is dismissed.
+
+### Retrieve widget [GET /widgets/{id}]
+
++ Parameters
+    + id (number) - The widget's unique ID
+
++ Response 200 (application/json)
+
+    + Attributes (Widget)
+
+    + Body
+
+            {
+                "id": "382392",
+                "template": "yes-no",
+                "views": [
+                    {
+                        "media": {
+                            "image": "https://cdn.wysker.com/..."
+                        },
+                        "options": [
+                            {
+                                "caption": "yay",
+                                "callback": "https://api.wysker.com/..."
+                            },
+                            {
+                                "caption": "nay",
+                                "callback": "https://api.wysker.com/..."
+                            }
+                        ]
+                    },
+                    {
+                        "media": {
+                            "image": "https://cdn.wysker.com/..."
+                        },
+                        "options": [
+                            {
+                                "caption": "yay",
+                                "callback": "https://api.wysker.com/..."
+                            },
+                            {
+                                "caption": "nay",
+                                "callback": "https://api.wysker.com/..."
+                            }
+                        ]
+                    },
+                    // ...
+                ]
+            }

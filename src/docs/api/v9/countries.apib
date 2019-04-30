@@ -1,0 +1,10 @@
+## Countries [/countries]
+### List countries [GET /countries]
+
+Lists all countries that are valid options for the "country" user preference
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + countries (array[object])
+            + id (string) - Country code in ISO 3166-1 alpha-2 format
+            + displayName (string) - Name of the country to be displayed in the app

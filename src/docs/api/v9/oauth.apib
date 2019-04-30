@@ -1,0 +1,73 @@
+## OAuth [/oauth]
+### Get access token for client credentials [POST /oauth/access_token]
+
+Returns an access token for a given client id and client secret according to the OAuth Client Credentials flow.
+*No token is required for this API endpoint.*
+
++ Request
+    + Attributes (object)
+        + client_id (string) - The client id
+        + client_secret (string) - The client secret
+        + grant_type (string) - The request type, must be client_credentials
+
+    + Body
+
+            {
+                "client_id": "eZBWa3n18FP4R6Uk",
+                "client_secret": qcMPz&@A!$S7<~;YALD*************",
+                "grant_type": "client_credentials"
+            }
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + access_token (string) - The access token
+        + token_type (string) - The type of the access token (always "bearer")
+        + expires_in (number) - Lifetime of the token in seconds
+
+    + Body
+
+            {
+                "access_token": "34s2sf009-28fk3hc89-dsha834m3-dsf843f",
+                "token_type": "bearer",
+                "expires_in": 18459372
+            }
+
++ Response 400 (application/json)
+    Error response when the specified client id and/or secret are unknown.
+
+    + Body
+
+            {
+                "error": "INVALID_CLIENT_ID_OR_SECRET",
+                "detail": "The provided client id or client secret are incorrect."
+            }
+
+### Validate access token [GET /oauth/validate_token{?access_token}]
+
+Verifies if a given access token is still valid.
+
++ Parameters
+    + access_token (string) - The access token to be verified
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + token_type (string) - The type of the access token (always "bearer")
+        + expires_in (number) - Lifetime of the token in seconds
+
+    + Body
+
+            {
+                "token_type": "bearer",
+                "expires_in": 18459372
+            }
+
+
++ Response 401 (application/json)
+    Error response when the specified access token is invalid or has expired
+
+    + Body
+
+            {
+                "error": "INVALID_ACCESS_TOKEN",
+                "message": "The provided access token is invalid or has expired."
+            }

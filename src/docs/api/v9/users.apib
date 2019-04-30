@@ -1,0 +1,295 @@
+## Users [/users]
+### Retrieve user details [GET /users/me]
+
+Returns the details for the account associated with the provided user access token.
+
++ Response 200 (application/json)
+
+    + Attributes (object)
+        + preferences (UserPreferences) - User preferences associated with the account
+        + inviteLink (string) - Link that can be shared to invite other users to use the app
+        + tokenBalance (string) - The account's wys token balance. Note that this is a string and not a number to preserve decimal precision.
+        + alias (string) - The user's public alias (aka username). Does not include the @-symbol.
+        + uin (number) - The users' identification number, typically displayed with a prefixed "#" (e.g. #3492).
+        + created (string) - An ISO 8601 date indicating when the user was created (the "birthday"),
+        + favoriteCount (number) - How many items are stored in the user's favorites
+    + Body
+
+            {
+                "accessToken": "34s2sf009-28fk3hc89-dsha834m3-dsf843f",
+                "expires": 18459372,
+                "preferences": {
+                    "audience": "girls",
+                    "notificationFrequency": "daily",
+                    "soundEnabled": true,
+                    "vibrationEnabled": true,
+                    "speed": "normal",
+                    "price": "",
+                    "currency": "EUR",
+                    "country": "US"
+                },
+                "inviteLink": "https://wys.sh/f834kjsd82k",
+                "tokenBalance": "10",
+                "alias": "john19393",
+                "uin": 48929,
+                "created": "2018-04-23T18:25:43.511Z",
+                "favoriteCount": 39
+            }
+
+### Get public user profile by UIN [GET /users/uin/{uin}]
+
+Returns all public information for a user given their UIN (user identification number)
+
++ Parameters
+    + id (number) - The user's UIN
+
++ Response 200 (application/json)
+
+    + Attributes (object)
+        + tokenBalance (string) - The account's wys token balance. Note that this is a string and not a number to preserve decimal precision.
+        + alias (string) - The user's public alias (aka username). Does not include the @-symbol.
+        + uin (number) - The users' identification number, typically displayed with a prefixed "#" (e.g. #3492).
+        + created (string) - An ISO 8601 date indicating when the user was created (the "birthday"),
+        + favoriteCount (number) - How many items are stored in the user's favorites
+
+    + Body
+
+            {
+                "tokenBalance": "10",
+                "alias": "john19393",
+                "uin": 48929,
+                "created": "2018-04-23T18:25:43.511Z",
+                "favoriteCount": 33
+            }
+
++ Response 404 (application/json)
+    Error returned if no users with the specified UIN exists
+
+    + Body
+
+            {
+                "error": "NO_SUCH_UIN",
+                "detail": "No user with that UIN is currently on record."
+            }
+
+
+
+### Get public user profile by alias [GET /users/alias/{alias}]
+
+Returns all public information for a user given their alias. This endpoint can also be used to validate if a username is still available.
+
++ Parameters
+    + alias (string) - The user's alias
+
++ Response 200 (application/json)
+
+    + Attributes (object)
+        + tokenBalance (string) - The account's wys token balance. Note that this is a string and not a number to preserve decimal precision.
+        + alias (string) - The user's public alias (aka username). Does not include the @-symbol.
+        + uin (number) - The users' identification number, typically displayed with a prefixed "#" (e.g. #3492).
+        + created (string) - An ISO 8601 date indicating when the user was created (the "birthday"),
+        + favoriteCount (number) - How many items are stored in the user's favorites
+
+    + Body
+
+            {
+                "tokenBalance": "10",
+                "alias": "john19393",
+                "uin": 48929,
+                "created": "2018-04-23T18:25:43.511Z",
+                "favoriteCount": 48
+            }
+
++ Response 404 (application/json)
+    Error returned if no users with the specified alias exists
+
+    + Body
+
+            {
+                "error": "NO_SUCH_ALIAS",
+                "detail": "No user with that alias is currently on record."
+            }
+
+### Create new user [POST /users]
+
+Creates a new user account.
+
++ Request
+    + Attributes (object)
+        + preferences (optional, UserPreferences) - User preferences to be associated with the account
+        + pushNotificationHandle (optional, string) - The device's push notification handle
+        + devicePlatform (enum[string])
+            + Members
+                + `android`
+                + `ios`
+        + referringUser (optional, string) - Id of the referring user
+        + alias (string) - Alias of the user to be created. Must not include the @-symbol. Valid characters are any Unicode-letter character (upper- and lowecase), the numbers 0-9, "." (dot) and "\_" (underscore). "." (dot) and "\_" (underscore) cannot be the first character in an alias. Minimum length is 3, maximum length is 30.
+        + acquisition (optional, Acquisition) - Optional details on how the user was acquired
+    + Body
+
+            {
+                "preferences": {
+                    "audience": "girls"
+                },
+                "pushNotificationHandle": "A439wd9AH830erifsjGZA03hsdjkJG93jf",
+                "devicePlatform": "android",
+                "referringUser": 1383,
+                "alias": "john14829",
+                "acquisition": {
+                    "adId": "jvf92esdaid9",
+                    "campaign": "IG_FARFETCH_SALE_201"
+                }
+            }
+
++ Response 200 (application/json)
+The account did not previously exist but was created.
+
+    + Attributes (object)
+        + accessToken (string) - The access token
+        + expires (number) - Lifetime of the token in seconds
+        + preferences (UserPreferences) - User preferences associated with the account
+        + inviteLink (string) - Link that can be shared to invite other users to use the app
+        + tokenBalance (string) - The account's wys token balance. Note that this is a string and not a number to preserve decimal precision.
+        + alias (string) - The user's public alias (aka username). Does not include the @-symbol.
+        + uin (number) - The user's unique identification number (displayed as #48393)
+        + created (string) - An ISO 8601 date indicating when the user was created (the "birthday"),
+        + favoriteCount (number) - How many items are stored in the user's favorites
+    + Body
+
+            {
+                "accessToken": "34s2sf009-28fk3hc89-dsha834m3-dsf843f",
+                "expires": 18459372,
+                "preferences": {
+                    "audience": "girls",
+                    "notificationFrequency": "daily",
+                    "soundEnabled": true,
+                    "vibrationEnabled": true
+                },
+                "inviteLink": "https://wys.sh/f834kjsd82k",
+                "tokenBalance": "10",
+                "alias": "john14829",
+                "uin": 389292,
+                "created": "2018-04-23T18:25:43.511Z",
+                "favoriteCount": 0
+            }
+
++ Response 409 (application/json)
+    Error returned if the specified alias is already taken.
+
+    + Body
+
+            {
+                "error": "ALIAS_ALREADY_IN_USE",
+                "detail": "The specified alias is already associated with an existing user."
+            }
+
++ Response 400 (application/json)
+    Error returned if the specified alias does not follow the above specified rules.
+
+    + Body
+
+            {
+                "error": "INVALID_ALIAS",
+                "detail": "The specified alias contains invalid characters, is too short or too long."
+            }
+
+
+### Recover account [POST /users/recover]
+
+Retrieve a user access token for an account by providing its recovery code.
+
++ Request
+    + Attributes (object)
+        + recoveryCode (string) - Recovery code of the account that will be unlocked
+    + Body
+
+            {
+                "recoveryCode": "UgGP2dYgAfynZ$%UFxXZe9w"
+            }
+
++ Response 200 (application/json)
+The account was successfully unlocked.
+
+    + Attributes (object)
+        + accessToken (string) - The access token
+        + expires (number) - Lifetime of the token in seconds
+        + preferences (UserPreferences) - User preferences associated with the account
+        + inviteLink (string) - Link that can be shared to invite other users to use the app
+        + tokenBalance (string) - The account's wys token balance. Note that this is a string and not a number to preserve decimal precision.
+        + alias (string) - The user's public alias (aka username). NOTE! The alias field may be empty for users who are recovering an existing account. If the alias is empty, the user needs to be asked to provide an alias and the "Update user" endpoint has to be invoked to save it.
+        + uin (number) - The user's unique identification number (displayed as #48393)
+        + created (string) - An ISO 8601 date indicating when the user was created (the "birthday"),
+        + favoriteCount (number) - How many items are stored in the user's favorites
+    + Body
+
+            {
+                "accessToken": "34s2sf009-28fk3hc89-dsha834m3-dsf843f",
+                "expires": 18459372,
+                "preferences": {
+                    "audience": "girls",
+                    "notificationFrequency": "daily",
+                    "soundEnabled": true,
+                    "vibrationEnabled": true
+                },
+                "inviteLink": "https://wys.sh/f834kjsd82k",
+                "tokenBalance": "10",
+                "alias": "john284939",
+                "uin": 389353345,
+                "created": "2018-04-23T18:25:43.511Z",
+                "favoriteCount": 44
+            }
+
+
+### Update user  [PUT /users/me]
+Updates a user's preferences,  push notification details and optionally their alias. A *USER TOKEN* is required for this endpoint.
+
++ Request
+    + Attributes (object)
+        + preferences (optional, UserPreferences) - User preferences to be associated with the account
+        + pushNotificationHandle (optional, string) - The device's push notification handle
+        + devicePlatform (optional, enum[string])
+            + Members
+                + `android`
+                + `ios`
+        + alias (optional, string) - Associates a new alias with the account
+    + Body
+
+            {
+                "preferences": {
+                    "audience": "boys",
+                    "soundEabled": false
+                },
+                "pushNotificationHandle": "A439wd9AH830erifsjGZA03hsdjkJG93jf",
+                "devicePlatform": "android",
+                "alias": "john3498290"
+            }
+
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + success (boolean) - Indicates that the request was successful (always true)
+    + Body
+
+            {
+                "success": true
+            }
+
++ Response 409 (application/json)
+    Error returned if the specified alias is already taken.
+
+    + Body
+
+            {
+                "error": "ALIAS_ALREADY_IN_USE",
+                "detail": "The specified alias is already associated with an existing user."
+            }
+
++ Response 400 (application/json)
+    Error returned if the specified alias does not follow the above specified rules.
+
+    + Body
+
+            {
+                "error": "INVALID_ALIAS",
+                "detail": "The specified alias contains invalid characters, is too short or too long."
+            }

@@ -1,0 +1,75 @@
+## Favorites [/users/me/favorites]
+### List all favorites [GET /users/me/favorites]
+List all of a user's favorites.
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + products (array[Product])
+        + next (string) - URL to be used to fetch the next batch of products
+
+    + Body
+
+            {
+                "products": [
+                    {
+                        "id" : "a4kdhhs9",
+                        "displayName": "Ernesto Mancone Traditionale",
+                        "price": {
+                            "amount": 8951,
+                            "currency": "EUR"
+                        },
+                        "regularPrice": {
+                            "amount": 999,
+                            "currency": "EUR"
+                        },
+                        "displayPrice": "€89.51",
+                        "displayRegularPrice": "€9.99",
+                        "media": {
+                            "largeImage": "http://.../.jpg",
+                            "smallImage": "http://.../.jpg",
+                        },
+                        "link": "http://.../",
+                        "shareLink": "https://wys.sh/df82jsd92k",
+                        "shop": {
+                            "id": "ajdf83j",
+                            "displayName": "Asos",
+                            "domainName": "asos.com",
+                            "link": "http://www.asos.com"
+                        }
+                    },
+                    // ...
+                ],
+                "next": "http://api.wysker.com/v9/.../"
+            }
+
+
+### Add product to favorites [POST /users/me/favorites]
+Add a product to a user's favorites.
+
++ Request
+    + Attributes (object)
+        + id (string) - Id of the product to add
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + success (boolean) - Indicates that the product was added successfully
+    + Body
+
+            {
+                "success": true
+            }
+
+### Remove products from favorites [DELETE /users/me/favorites/{ids}]
+Remove a product from a user's favorites if it exists.
+
++ Parameters
+    + ids (string) - A comma-separated list of product ids to remove
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + success (boolean) - Indicates that the product was added successfully
+    + Body
+
+            {
+                "success": true
+            }

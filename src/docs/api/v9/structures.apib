@@ -1,0 +1,193 @@
+# Data Structures
+## Story (object)
++ id (string) - Unique identifier of the story
++ displayName (string) - Name of the story to be displayed in the app. May contain line breaks ("\n")
++ media (object)
+    + titleImage (string) - URL of a high-resolution title image for this story
++ author (object)
+    + alias (string) - Name of the author
+    + avatar (string) - URL of a JPEG image that contains the user's avatar
++ published (string) - An ISO 8601 date indicating when the story was first published
++ imageCopyright (object) - Copyright information for the title image
+    + title (string) - Name of the copyright holder
+    + link (string) - Link to the image's original source
++ itemCount (number) - How many products are contained in the story
++ url (string) - API URL for fetching content related to this story
++ statistics (object) - Statistics related to the story
+    + viewed (number) - How often the story has been viewed
+    + shared (number) - How often the story has been shared
+    + storyShared (number) - How often the story has been shared as an Instagram or SnapChat story
++ shareLink (string) - URL that can be used to share the referenced story
++ placeholder (Gradient) - Gradient to show before the story cover image has been loaded
+
+## Channel (object)
++ id (string) - Unique identifier of the channel
++ displayName (string) - Name of the channel to be displayed in the app
++ url (string) - API URL for fetching content related to this channel
++ latestStory (Story) - Latest story in this channel
+
+## Stream (object)
++ id (string) - Unique identifier of the stream
++ displayName (string) - Name of the stream to be displayed in the app
++ url (string) - API URL for fetching content related to this stream
++ products (array[Product], optional) - List of products in this stream
++ reward (TokenReward) - Token reward for this stream
+
+## Product (object)
++ id (string) - Unique identifier of the product
++ displayName (string) - Name of the product to be displayed in the app
++ favorited (boolean) - Indicates if the product is in the user's favorite list
++ price (object)
+    + amount (number) - The price in multiples of the currency's smallest subunit (e.g. USD $19.99 becomes 1999)
+    + currency (string) - ISO 4217 currency code (e.g. USD, EUR, GBP)
++ regularPrice (object)
+    + amount (number) - The regular (undiscounted) price in multiples of the currency's smallest subunit (e.g. USD $19.99 becomes 1999)
+    + currency (string) - ISO 4217 currency code (e.g. USD, EUR, GBP)
++ displayPrice (string) - The formatted price to be displayed in the app
++ displayRegularPrice (string) - The formatted sale price to be displayed in the app
++ media (object)
+    + largeImage (string) - URL of a high-resolution image of the product in JPEG format
+    + smallImage (string) - URL of a low-resolution image of the product in JPEG format
++ link (string) - URL of the product's page on the shop's website
++ shareLink (string) - URL that can be used to share the product with other users
++ shop (object)
+    + id (string) - Unique identifier of the shop
+    + displayName (string) - Name of the shop to be displayed in the app
+    + domainName (string) - The shops' domain name
+    + link (string) - URL of the shop's website
++ statistics (object)
+    + favorited (number) - How often the product was added to favorites
+    + shopped (number) - How often the product's shop page was opened
+    + shared (number) - How often the product was shared
+
+## UserPreferences (object)
++ audience (optional, enum[string]) - Specifies, what kind of products the user is interested in
+    + Members
+        + `girls`
+        + `boys`
+        + `all`
++ notificationFrequency (optional, enum[string]) -
+    + Members
+        + `never`
+        + `weekly`
+        + `daily`
++ soundEnabled (optional, boolean) - Indicates if sound should be enabled
++ vibrationEnabled (optional, boolean) - Indicates if vibration should be enabled
++ speed (optional, enum[string]) - The user's preferred wysker speed
+    + Members
+        + `fast`
+        + `normal`
+        + `slow`
++ priceRange (optional, enum[string]) - The user's preferred price-range
+    + Members
+        + `unlimited`
+        + `upper`
+        + `medium`
+        + `lower`
++ currency (optional, string) - The user's preferred currency (ISO 4217 3-letter format)
++ country (optional, string) - The user's country of residence (ISO 3166-1 alpha-2 format)
++ allowInternationalShipping (optional, boolean) - Indicates if products that are shipped internationally will be displayed.
+
+## Identity (object)
++ provider (optional, enum[string]) - Identity provider (currently only Facebook)
+    + Members
+        + `facebook`
+    + token (optional, string) - Access or Id token for the user
+    + tokenSecret (optional, string) - Access token secret (can be omitted when not required)
+
+## TokenReward (object)
++ amount (number) - Number of tokens (or fractions of tokens) to be rewarded for this stream
++ claim (string) - A key that can be used to claim this token reward (see "Claim Token Reward" endpoint)
+
+## NamedEntity (object)
++ id (string) - Unique identifier of the entity
++ displayName (string) - Name of the entity to be displayed in the app
+
+## Gradient (object)
++ fromColor (string) - HTML color code of the gradient's starting color (#RRGGBB in hex)
++ toColor (string) - HTML color code of the gradient's end color (#RRGGBB in hex)
+
+## Style (object)
++ id (string) - Unique identifier of the entity
++ displayName (string) - Name of the entity to be displayed in the app
++ gradient (Gradient) - The style's color gradient to be displayed in the app
++ emoji (string) - Emoji that represents the style
++ solidColor (string) - A solid color representing the style
+
+## Badge (object)
++ displayName (string) - The badge's display name
++ image (string) - URL of an image that represents this badge
+
+## Notification (object)
++ id (string) - Unique ID of the notification
++ icon (object)
+    + emoji (optional, string) - Emoji character to be displayed as the notification's icon
+    + image (optional, string) - URL of a PNG image to be displayed as the notification's icon
++ body (string) - Body text of the notification. This is an HTML string that may contain "<b></b>" tags to denote text that should be displayed in bold.
++ received (string) - An ISO 8601 UTC date indicating when the notification was received
++ expires (optional, string) - An optional ISO 8601 UTC date after which the notification should no longer be displayed
++ countdown (boolean) - Indicates if the `expires` timestamp should be displayed as a countdown
++ action (object) - Describes the notification's associated action
+    + title (string) - Title of the action to be performed (e.g. "view" or "buy"). This text is displayed on the right side of the notification bubble.
+    + type (enum[string]) - Type of action to be performed when the user interacts with the notification
+        + ``
+    + target (string) - Target of the action depending on the action type (see "Notifications")
+    + parameters (optional, array[string]) - An optional parameter list associated with the action
+
+## SearchResult (object)
++ id (string) - Unique ID of the story or stream
++ url (string) - API URL for fetching content related to this search result
++ displayName (string) - Title text to display for this result (may contain emojis)
++ type (enum[string]) - Type of the search result
+    + Members
+        + `stream`
+        + `story`
++ media (object)
+    + titleImage (string) - URL of a JPEG that is the title image of the stream or story
++ placeholder (object)
+    + from  (string) - HEX color code of the beginning of a gradient
+    + to  (string) - HEX color code of the end of a gradient
++ published (string) - An ISO 8601 date indicating when the story or stream was first published
++ author (object, optional) - Not available for streams
+    + alias (string) - Name of the author
+    + avatar (string) - URL of a JPEG image that contains the user's avatar
++ imageCopyright (object) - Copyright information for the title image. Not available for streams.
+    + title (string) - Name of the copyright holder
+    + link (string) - Link to the image's original source
++ itemCount (number) - How many products are contained in the story or stream
++ statistics (object) - Statistics related to the story (not available for streams)
+    + viewed (number) - How often the story has been viewed
+    + shared (number) - How often the story has been shared
+    + storyShared (number) - How often the story has been shared as an Instagram or SnapChat story
++ shareLink (string) - URL that can be used to share the referenced story (not available for streams)
+
+## Widget (object)
++ id (string) - Unique ID of the widget
++ template (enum[string])
+    + Members
+        + `rating` - A rating control that allows the user to give a rating of anywhere between 1 and 5 stars
+        + `carousel` - A swipe-able carousel that shows multiple images or videos
+        + `two-way-choice` - A grid of 2 images out of which one can be selected
+        + `four-way-choice` - A grid of 4 images out of which one can be selected
+        + `yes-no` - An image with two buttons underneath out of which one can be selected
++ views (array[WidgetView])
+
+## WidgetView (object)
++ media (optional, object)
+    + image (optional, string) - A JPEG or PNG image associated with this view
+    + video (optional, string) - An MP4 video associated with this view
++ options (array[object])
+    + image (optional, string) - A JPEG or PNG image associated with this option
+    + caption (optional, string) - A text associated with this option (e.g. the caption of the 'yes' or 'no' button)
+    + callback (string) - URL to be invoked (POST) when the user choose this option. A user access token is required for this operation.
+
+## Acquisition (object)
++ adId (optional, string)
++ trackerToken (optional, string)
++ trackerName (optional, string)
++ network (optional, string)
++ campaign (optional, string)
++ adGroup (optional, string)
++ clickLabel (optional, string)
++ creative (optional, string)
++ attributionAdId (optional, string)

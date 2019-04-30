@@ -1,0 +1,113 @@
+## Friends [/users/me/friends]
+
+### List users friends [GET /users/me/friends]
+
+Lists users' friends. List can be filtered by `status` query param which can be `confirmed`, `pending` or `requested`
+
++ Parameters
+    + status (string, optional) - Status of friends (`confirmed`, `pending`, `requested`). Defaults to `confirmed` when `status` parameter is not provided.
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + friends (array) - List of friends
+
+    + Body
+            {
+                "friends": [{
+                    "id": "W8wM",
+                    "friend": "20002",
+                    "status": "confirmed",
+                    "created": "2019-03-26T10:54:45.507Z",
+                    "uin": "31977",
+                    "alias": "miraskin",
+                    "avatar": null
+                },
+                {
+                    "id": "W8wK",
+                    "friend": "20000",
+                    "status": "confirmed",
+                    "created": "2019-03-26T10:54:45.507Z",
+                    "uin": "31975",
+                    "alias": "valcsak98",
+                    "avatar": null
+                }]
+            }
+
+### Invite a new friend [POST /users/me/contacts]
+
+Invites a new friend with a given `whid`
+
++ Request
+    + Attributes (object)
+        + id (string) - `whid` of a friend (user) to invite
+    + Body
+
+            {
+                "id": "W2m20VA"
+            }
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + success (boolean) - Indicates that the request finished successfully
+
+    + Body
+
+            {
+                "success": true
+            }
+
+### Accept friends invitation [POST /users/me/friends/{id}/accept]
+
+Accepts friend request from another user. No `POST` body is expected by this endpoint.
+
++ Request
+    + Attributes (object)
+        + id (string) - `whid` of a friend (user) to accept an invitation from
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + success (boolean) - Indicates that the request finished successfully
+
+    + Body
+
+            {
+                "success": true
+            }
+
++ Response 404 (application/json)
+    Error returned if no users with the specified ID exists
+
+    + Body
+
+            {
+                "error": "NO_SUCH_USER",
+                "detail": "The specified user does not exist"
+            }
+
+### Remove user from friends list [DELETE /users/me/friends/{id}]
+
+Removes given user from friends list
+
++ Request
+    + Attributes (object)
+        + id (string) - `whid` of a friend (user) to accept an invitation from
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + success (boolean) - Indicates that the request finished successfully
+
+    + Body
+
+            {
+                "success": true
+            }
+
++ Response 404 (application/json)
+    Error returned if no users with the specified ID exists
+
+    + Body
+
+            {
+                "error": "NO_SUCH_USER",
+                "detail": "The specified user does not exist"
+            }

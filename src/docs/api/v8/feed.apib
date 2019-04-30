@@ -1,0 +1,109 @@
+## Feed [/feed]
+
+### Get feed [GET /feed{?page}]
+
+Lists items recently added to the friends' wishlists
+
++ Parameters
+    + page (number, optional) - Page of responses to show
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + feed (array) - List of friends' favorites
+
+    + Body
+            {
+                "feed": [{
+                    "type": "product",
+                    "id": "143488",
+                    "added": "2018-10-08T00:20:50.194Z"
+                }]
+            }
+
+
+## Notifications [/users/me/notifications]
+
+Notifications consist of an icon, a body text and an associated action. Notification actions can have the following types:
+
+* `DISMISS` Dismisses (deletes) the notification
+* `GO_TO_VIEW` When activated, opens a specific view of the app. The `target` parameter specifies which view to open
+    * `SETTINGS` Open the settings page
+    * `SETTINGS/SPEED` Shows the speed selection settings screen
+    * `SETTINGS/PRICE-RANGE` Shows the price range selection settings screen
+    * `SETTINGS/ALLOW_INTERNATIONAL_SHIPPING` Shows the international shipping selection settings screen
+    * `SETTINGS/CURRENCY` Shows the currency selection settings screen
+    * `SETTINGS/COUNTRY` Shows the country selection settings screen
+    * `STORIES` Open the stories overview
+    * `SEARCH` Goes to the default wysker view and expands the search bar. If `parameter[0]` is specified, the search box will be pre-filled with this value.
+    * `ABOUT/LEVELS` Show the levels explanation screen
+    * `ABOUT/TRAINING` Show the training explanation screen
+    * `ABOUT/TOKENS` Show the tokens explanation screen
+    * `TOKENS` Shows the "my tokens" screen
+    * `KEY` Shows the "my wysker key" screen
+    * `WISHLIST` Shows the user's wishlist
+* `ENABLE_PUSH_NOTIFICATIONS` Asks the user to enable push notifications
+* `OPEN_WEB_VIEW` Opens the in-app web view with the URL specified in `target`
+* `OPEN_URL` Opens the URL specified in `target` using the platform's default browser
+* `SHARE_TEXT` Shares the message specified in `parameters[0]`. If `target` is not specified or equals `native`, the built-in sharing dialog is used. Otherwise the message is shared directly via the app specified in `target` (possible options are `facebook`, `twitter`, `instagram` and `snapchat`).
+* `SHARE_URL` Shares the URL specified in `parameter[0]`. See `SHARE_TEXT` for details about the `target` attribute.
+* `SHARE_IMAGE` Shares the image whose URL is specified in `parameter[0]`. See `SHARE_TEXT` for details about the `target` attribute.
+* `GO_TO_STORY` Opens the story whose ID is specified in `target`
+* `GO_TO_STREAM` Opens the stream whose ID is specified in `target`
+* `GO_TO_JOURNEY` Opens the journey whose ID is specified in `target`
+* `UPDATE_APP` Downloads an app update (if available)
+* `RATE_APP` Opens the app store/play store and prompts the user to rate the app
+* `COLLECT_TOKENS` Collect the amount of tokens specified in `parameters[0]` using the claim in `parameters[1]`
+* `RUN_SCRIPT` Run a server-side script whose URL is specified in `target`
+* `SHOW_WIDGET` Display the widget whose id is specified in `target`. `parameters[0]` contains the widget template.
+
+### List all notifications [GET /users/me/notifications{?since}]
+
+Returns a list of all notifications.
+Notifications should be fetched periodically and cached locally on the device. The notifications endpoint returns an `ETag` header that can be used to determine if new notifications are available. Each notification has a unique ID that can be used to avoid duplicates.
+
++ Parameters
+    + since (number) - When passing the `since` parameter (a unix timestamp), only notifications newer than the specified timestamp will be returned.
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + timestamp (number) - Unix timestamp that can be used to fetch only newer notifications in subsequent requests
+        + notifications (array[Notification])
+        + next (string) - URL to be used to fetch the next batch of notifications
+
+    + Body
+
+            {
+                "timestamp": 12052389052350,
+                "notifications": [
+                    {
+                        "id" : "a4kdhhs9",
+                        "icon": {
+                            "image": "https://cdn.wysker.com/..."
+                        },
+                        "body": "<b>Summer Time</b> - The 97 hottest bikinis for your summer vacay!",
+                        "received": "2018-04-23T18:25:43.511Z",
+                        "action": {
+                            "type": "GO_TO_STORY",
+                            "target": "4829",
+                            "parameters": []
+                        }
+                    },
+                    // ...
+                ],
+                "next": "http://api.wysker.com/v9/.../"
+            }
+
+### Remove a notification [DELETE /users/me/notifications/{id}]
+Removes (dismisses) a notification
+
++ Parameters
+    + id (string) - Unique ID of the notification
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + success (boolean) - Indicates that the product was added successfully
+    + Body
+
+            {
+                "success": true
+            }

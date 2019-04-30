@@ -1,0 +1,18 @@
+{
+  "name": "wysker-documentation",
+  "version": "0.0.1",
+  "description": "wysker Documentation",
+  "scripts": {
+    "build": "docker run --rm -v $(pwd):/data lucor/aglio --theme-full-width --theme-template triple --theme-variables slate -i ./src/docs/api/v8/index.apib -o ./api/v8/index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wysker/wysker.github.io"
+  },
+  "author": "wysker GmbH",
+  "license": "Proprietary",
+  "homepage": "https://github.com/wysker/wysker.github.io",
+  "devDependencies": {
+    "nodemon": "*"
+  }
+}

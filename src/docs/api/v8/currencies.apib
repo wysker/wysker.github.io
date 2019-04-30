@@ -1,0 +1,10 @@
+## Currencies [/currencies]
+### List currencies [GET /currencies]
+
+Lists all currencies that are valid options for the "currency" user preference
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + currencies (array[object])
+            + id (string) - Currency code in ISO 4217 3-letter format
+            + displayName (string) - Name of the currency to be displayed in the app

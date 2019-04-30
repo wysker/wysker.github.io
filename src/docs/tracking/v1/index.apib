@@ -1,0 +1,190 @@
+FORMAT: 1A
+HOST: https://track.wysker.com/v1/
+
+# wysker Tracking
+
+## Sessions [/sessions/]
+### Start a new session [POST /sessions/new]
+
+Starts a new user session and returns a unique session ID. This endpoint needs to be called with a *user access token*.
+
++ Request
+    + Attributes (object)
+        + platform (enum[string]) - The operating system the client application is running on
+            + members
+                + `ios`
+                + `android`
+        + locale (string) - The current (active) locale of the client operating system. Must include language and country (e.g. "en-US")
+        + utcOffset (number) - The offset in seconds of the client's selected timezone to UTC standard time (e.g. 1h for Germany, so the offset would be "3600"). Can be negative.
+        + timestamp (number) - Current unix timestamp (UTC) as reported by the client's operating system (the number of seconds since January 1, 1970 00:00:00)
+        + clientVersion (string) - Version number of the client application (e.g. "1.0.40")
+
+    + Body
+
+            {
+                "platform": "ios",
+                "locale": "de-DE",
+                "utcOffset": 3600,
+                "timestamp": 298239230923,
+                "clientVersion: "1.0.40"
+            }
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + session (string) - The session ID
+
+    + Body
+
+            {
+                "session": "34s2sf00928fk3hc89dsha834m3dsf843f"
+            }
+
+
+### Track an event [POST /sessions/{session}]
+
+Tracks an event that has occurred during an ongoing session. *No access token is required for this endpoint*.
+
+#### Supported event types
+The following event types can be specified:
+
+* `PRODUCT/STORE/ENTER` User has double-tapped a product to open its product page in the browser or webview
+    * **`detail`**  - ID of the current product
+* `PRODUCT/STORE/LEAVE` User has returned to wysker after looking at a product page in the browser or webview
+    * **`detail`**  - An object specifying the ``product`` and how long the store page was looked at in seconds, e.g.
+
+        ```
+        {
+            ...
+            "detail": {
+                "product": "a48s92392",
+                "duration": 482929
+            }
+        }
+        ```
+* `PRODUCT/SHARE` User has chosen to share a specific product
+    * **`detail`**  - ID of the shared product
+* `PRODUCT/ADD_TO_WISHLIST` User has added a product to their wishlist
+    * **`detail`**  - ID of the product that is added to the wishlist
+* `PRODUCT/REMOVE_FROM_WISHLIST` User has removed a product from their wishlist
+    * **`detail`**  - ID of the product that is removed from the wishlist
+* `CATEGORY/ENTER` User has selected a category from the explore section
+    * **`detail`**  - an object specifying the ``category`` and ``audience``, e.g.
+
+        ```
+        {
+            ...
+            "detail": {
+                "category": "Watches",
+                "audience": "boys"
+            }
+        }
+        ```
+* `AUDIENCE/CHANGE` User has changed the audience (boys/girls) in the explore section
+    * **`detail`**  - The new audience (`boys` or `girls`)
+* `WISHLIST/ENTER` User has opened their wishlist
+    * **`detail`**  - Empty
+* `SEARCH/ENTER` User has tapped into the search box
+    * **`detail`**  - Empty
+* `SEARCH/SELECT_SUGGESTION` User has selected a suggestion from the search results box
+    * **`detail`**  - an object specifying the ``keyword`` the user has typed in (can be empty) and the ID of the select ``stream``, e.g.
+
+        ```
+        {
+            ...
+            "detail": {
+                "stream": "a49idk29",
+                "keyword": "jeans"
+            }
+        }
+        ```
+* `SEARCH/LEAVE` User has aborted a search without selecting a search result
+    * **`detail`**  - Empty
+* `JOURNEY` User has used the wysker app for a certain duration of time
+    * **`detail`**  - Please see below
+
+#### Journeys
+Journeys represent a period of app usage. A journey begins when the user first opens the app, when they select a category from the explore section or when they choose a suggestion from the search results. A journey ends either when a new journey begins or when the app is closed. To prevent data loss, partial journeys may be reported to the tracking API.
+
+The different stages of a journey are reported to the tracking API via the `detail` parameter. An example of this is given below:
+
+```
+{
+    "event": "JOURNEY",
+    "utcOffset": -4823992,
+    "timestamp": 325902395235,
+    "detail": [
+        {"action": "BEGIN", "stream": "392920"},
+        {"action": "STAY", "product": "942891", "duration": 1000},
+        {"action": "SWIPE_NEXT", "product": "93020"},
+        {"action": "SWIPE_PREVIOUS", "product": "93020"},
+        {"action": "STAY", "product": "942891", "duration": 2000},
+        {"action": "WYSKER", "stream": "942891", "airtime": {
+            "49939": 1520,
+            "4939": 103,
+            "3219": 1550
+        }},
+        {"action": "NEXT_STREAM", "stream": "94920"},
+        {"action": "WYSKER", "stream": "942891", "airtime": {
+            "49939": 1520,
+            "4939": 103,
+            "3219": 1550
+        }},
+        {"action": "PREVIOUS_STREAM", "stream": "94920"},
+        {"action": "STAY", "product": "942891", "duration": 1000}
+    ]
+}
+```
+
+Each entry represents one specific action:
+
+* `BEGIN` The journey has started at the specified stream
+
+    **Parameters:**
+    * `stream` ID of the stream the journey has started on
+* `STAY` The user has stopped wyskering and is now looking at one specific product. Only report this action if the user looks at a product for more than 1 second.
+
+    **Parameters:**
+    * `product` ID of the product the user is looking on
+    * `duration` time in milliseconds the user has looked at the product
+* `SWIPE_NEXT` The user has swiped to the next product
+
+    **Parameters:**
+    * `product` ID of the product the user has swiped to (the new product being shown)
+* `SWIPE_PREVIOUS` The user has swiped backwards to the previous product
+
+    **Parameters:**
+    * `product` ID of the product the user has swiped to (the new product being shown)
+* `WYSKER` The user has pulled up the wysker button
+
+    **Parameters:**
+    * `stream` ID of the current stream
+    * `airtime` A dictionary that maps product IDs to the number of milliseconds the product has been visible during this action.
+* `NEXT_STREAM` The user has switched to the next stream
+
+    **Parameters:**
+    * `stream` ID of the stream the user has swiped to (the new stream being shown)
+* `PREVIOUS_STREAM` The user has switched to the previous stream
+
+    **Parameters:**
+    * `stream` ID of the stream the user has swiped to (the new stream being shown)
+
+
++ Parameters
+    + session (string) - The session ID
+
++ Request
+    + Attributes (object)
+        + event (string) - Type of the event to be tracked
+        + utcOffset (number) - The offset in seconds of the client's selected timezone to UTC standard time (e.g. 1h for Germany, so the offset would be `3600`). Can be negative.
+        + timestamp (number) - Current unix timestamp (UTC) as reported by the client's operating system (the number of seconds since January 1, 1970 00:00:00)
+        + detail (optional, object) - Optionally provides additional details regarding the event to be tracked
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + success (boolean) - Indicates that the event was tracked successfully
+
+    + Body
+
+            {
+                "success": true
+            }

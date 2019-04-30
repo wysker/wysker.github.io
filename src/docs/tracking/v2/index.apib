@@ -1,0 +1,70 @@
+FORMAT: 1A
+HOST: https://track.wysker.com/v2/
+
+# wysker Tracking v2
+
+## Sessions [/sessions/]
+### Start a new session [POST /sessions]
+
+Starts a new user session and returns a unique session ID. This endpoint needs to be called with a *user access token*.
+
++ Request
+    + Attributes (object)
+        + platform (enum[string]) - The operating system the client application is running on
+            + members
+                + `ios`
+                + `android`
+        + locale (string) - The current (active) locale of the client operating system. Must include language and country (e.g. "en-US")
+        + utcOffset (number) - The offset in seconds of the client's selected timezone to UTC standard time (e.g. 1h for Germany, so the offset would be "3600"). Can be negative.
+        + timestamp (number) - Current unix timestamp (UTC) as reported by the client's operating system (the number of seconds since January 1, 1970 00:00:00)
+        + clientVersion (string) - Version number of the client application (e.g. "1.0.40")
+
+    + Body
+
+            {
+                "platform": "ios",
+                "locale": "de-DE",
+                "utcOffset": 3600,
+                "timestamp": 298239230923,
+                "clientVersion: "1.0.40"
+            }
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + session (string) - The session ID
+
+    + Body
+
+            {
+                "session": "34s2sf00928fk3hc89dsha834m3dsf843f"
+            }
+
+
+### Track event [POST /sessions/{session}]
+
+Tracks an event that has occurred during an ongoing session. *No access token is required for this endpoint*.
+
++ Parameters
+    + session (string) - The session ID
+
++ Request
+    + Attributes (object)
+        + context (object)
+            + view (string) - Canonical name of the view within the app where the event occured
+            + resource (string) - If applicable, which resource was being presented in the view when the event occured
+        + action (string) - Canonical name of what action the user was performing
+        + detail (string) - Additional detail describing this action
+        + target (string) - If applicable, the ID or canonical name of what the action was performed on
+        + referrer (string) - For actions that cause a new resource to be loaded, the referrer contains the ID or canonical name of the previous resource
+        + utcOffset (number) - The offset in seconds of the client's selected timezone to UTC standard time (e.g. 1h for Germany, so the offset would be "3600"). Can be negative.
+        + timestamp (number) - Current unix timestamp (UTC) as reported by the client's operating system (the number of seconds since January 1, 1970 00:00:00)
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + success (boolean) - Indicates that the event was tracked successfully
+
+    + Body
+
+            {
+                "success": true
+            }

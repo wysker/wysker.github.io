@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "wysker Documentation",
   "scripts": {
-    "build": "docker run --rm -v $(pwd):/data lucor/aglio --theme-full-width --theme-template triple --theme-variables slate -i ./src/docs/api/v12/index.apib -o ./api/v12/index.html"
+    "build": "docker run --rm -v $(pwd):/data lucor/aglio --theme-full-width --theme-template triple --theme-variables slate -i ./src/docs/tracking/v2/index.apib -o ./tracking/v2/index.html"
   },
   "repository": {
     "type": "git",

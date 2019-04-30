@@ -1,0 +1,16 @@
+## Tokens [/tokens]
+### Claim token reward [POST /tokens/claim]
+
+Claims a token reward for a user identified by their user access token.
+
++ Parameters
+    + claims (array[string]) - One or more reward claims
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + success (boolean) - Indicates that the tokens were successfully claimed
+    + Body
+
+        {
+            "success": true
+        }

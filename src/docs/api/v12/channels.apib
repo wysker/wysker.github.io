@@ -1,0 +1,31 @@
+## Channels [/channels]
+### List channels [GET /channels]
+
+Returns a list of all channels.
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + channels (array[object])
+            + id (string) - Unique identifier of the channel
+            + url (string) - API endpoint that returns content for this channel
+            + displayName (string) - Name of the channel to be displayed in the app
+            + emoji (string) - Emoji character sequence for this channel
+
+    + Body
+
+        {
+          "channels": [
+            {
+              "id": "W0",
+              "url": "http://localhost:5000/v9/nodes/W0",
+              "displayName": "All stories"
+            },
+            {
+              "id": "W8h",
+              "url": "http://localhost:5000/v9/nodes/W8h",
+              "displayName": "Pop",
+              "emoji": "🍿"
+            },
+            //..
+        }
+    }

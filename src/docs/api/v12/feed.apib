@@ -1,0 +1,21 @@
+## Feed [/feed]
+
+### Get feed [GET /feed{?page}]
+
+Lists items recently added to the friends' wishlists
+
++ Parameters
+    + page (number, optional) - Page of responses to show
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + feed (array) - List of friends' favorites
+
+    + Body
+            {
+                "feed": [{
+                    "type": "product",
+                    "id": "143488",
+                    "added": "2018-10-08T00:20:50.194Z"
+                }]
+            }

@@ -1,0 +1,114 @@
+## Reactions [/reactions]
+### Add like to a given reaction [POST /reactions/{id}/likes]
+
+Adds new like to a given reaction
+
++ Parameters
+    + id (string) - Unique identifier of the reaction
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + success (boolean) - Indicates that the request was successful (always true)
+
+### Delete like from given reaction [DELETE /reactions/{id}/likes]
+
+Deletes like from a given reaction
+
++ Parameters
+    + id (string) - Unique identifier of the reaction
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + success (boolean) - Indicates that the request was successful (always true)
+
+### Add new comment to a given reaction [POST /reactions/{id}]
+
+Adds a paragraph of text to a given reaction
+
++ Parameters
+    + id (string) - Unique identifier of the reaction
+
++ Request
+    + Attributes
+        + comment (string) - Contents of a comment. Max 300 characters.
+    + Body
+
+        {
+            "comment": "Lorem ipsum dolor sit amet."
+        }
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + success (boolean) - Indicates that the request was successful (always true)
+    + Body
+
+            {
+                "success": true
+            }
+
++ Response 400 (application/json)
+    Error returned if `comment` attribute is missing
+
+    + Body
+
+            {
+                "error": "MALFORMED_REQUEST",
+                "detail": "Incorrect or missing value for field(s) `comment`."
+            }
+
++ Response 400 (application/json)
+    Error returned if provided comment is too long
+
+    + Body
+
+            {
+                "error": "COMMENT_TOO_LONG",
+                "detail": "Provided comment is too long."
+            }
+
+### Get responses to a reaction [GET /reactions/{id}/responses{?page}]
+
+Retrieves a list of responses to a given reaction
+
++ Parameters
+    + id (string) - Unique identifier of the reaction
+    + page (number, optional) - Page of responses to show
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + success (boolean) - Indicates that the request was successful (always true)
+        + responses (array[Reaction]) - An array of responses
+        + next (number) - An integer value representing the next page of responses
+    + Body
+
+            {
+                "success": true,
+                "responses": [],
+                "next": 2
+            }
+
+### Delete a reaction [DELETE /reactions/{id}]
+
+Marks the given reaction as deleted
+
++ Parameters
+    + id (string) - Unique identifier of the reaction
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + success (boolean) - Indicates that the request was successful (always true)
+    + Body
+
+            {
+                "success": true
+            }
+
++ Response 400 (application/json)
+    Error returned if provided comment is too long
+
+    + Body
+
+            {
+                "error": "COMMENT_TOO_LONG",
+                "detail": "Provided comment is too long."
+            }

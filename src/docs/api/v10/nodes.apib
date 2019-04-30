@@ -1,0 +1,330 @@
+## Nodes [/nodes]
+### Get reactions for a given node [GET /nodes/{id}/reactions{?page}]
+
+Returns a list of reactions for a given node
+
++ Parameters
+    + id (string) - Unique identifier of the node
+    + page (number, optional) - Page of responses to show
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + success (boolean) - Indicates that the request was successful (always true)
+        + reactions (array) - An array of reactions
+        + next (number) - An integer value representing the next page of reactions
+    + Body
+
+            {
+                "success": true,
+                "reactions": [],
+                "next": 2
+            }
+
+### Add new reaction to a given node [POST /nodes/{id}/reactions]
+
+Adds new reaction to a given node. Within the request body EITHER `type` or `comment` key must be present. `type` provides a simple emoji reaction while `comment` is used for providing a paragraph of text. If Node ID contains `user` part, the reaction becomes private.
+
++ Parameters
+    + id (string) - Unique identifier of the node
+
++ Request
+    + Attributes (object)
+        + type (string) - A type of a reaction. Can be one of the following: `heart`, `fire`, `thumbs_down`, `shocked`, `unamused`, `laughing`
+        + comment (string) - Contents of a comment. Max 300 characters.
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + success (boolean) - Indicates that the request was successful (always true)
+    + Body
+
+            {
+                "success": true
+            }
+
++ Response 400 (application/json)
+    Error returned if provided comment is too long
+
+    + Body
+
+            {
+                "error": "COMMENT_TOO_LONG",
+                "detail": "Provided comment is too long."
+            }
+
++ Response 400 (application/json)
+    Error returned if `type` or `comment` attribute is missing
+
+    + Body
+
+            {
+                "error": "MALFORMED_REQUEST",
+                "detail": "Incorrect or missing value for field(s) `type`, `comment`."
+            }
+
++ Response 400 (application/json)
+    Error returned if both `type` and `comment` attributes are present
+
+    + Body
+
+            {
+                "error": "TOO_MANY_KEYS_IN_BODY",
+                "detail": "The provided request body consists of too many contradicting keys."
+            }
+
+### List products, streams, stories and channels for node [GET /nodes/{id}{?audience}]
+
+Returns stories or streams that match the specified keywords.
+
++ Parameters
+    + id (string, optional) - Unique identifier of the node
+    + audience (enum[string], optional) - Audience for which content should be returned
+        + Members
+            + `boys`
+            + `girls`
+            + `all`
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + current (object) The current node
+            + stream (Stream)
+            + story (Story, optional)
+            + channel (Channel)
+        + adjacent (object) - Channels, stories and streams adjacent to the current node
+            + streams (object)
+                + next (array[Stream])
+                + previous (array[Stream])
+            + stories (object, optional)
+                + next (array[Story])
+                + previous (array[Story])
+            + channels (object)
+                + next (array[Channel])
+                + previous (array[Channel])
+    + Body
+
+        {
+          "current": {
+            "stream": {
+              "id": "W1Y7kkzA",
+              "displayName": "McCartney Sneakers",
+              "url": "http://localhost:5000/v9/nodes/W1Y7kkzA?query=sneakers&origin=1325",
+              "products": [
+                {
+                  "id": "W2QaCfGMPwZ0gWI",
+                  "displayName": "Stella McCartney Eclypse Sneakers - Farfetch",
+                  "favorited": false,
+                  "price": {
+                    "amount": 45500,
+                    "currency": "GBP"
+                  },
+                  "regularPrice": null,
+                  "displayPrice": "£455",
+                  "displayRegularPrice": null,
+                  "media": {
+                    "largeImage": "https://cdn.wysker.com/large/123/dd4532cc-2434-4bf6-8946-8e717162032a.jpg",
+                    "smallImage": "https://cdn.wysker.com/medium/168/0f7d92c1-c38e-445e-a56c-ecc9ec500d78.jpg"
+                  },
+                  "link": "https://wys.sh/r/3o46Q74RC9irPQFtVGyLFqpv0zKj7iDS5fbWm1DEtjHiyz2JXKNalRVdUGdrKgjvLcU8MAxkMhPxZ9OR9EqeC7FHH4PvdDjqM6WvsiMw4dsWQuKfolOuaMMtwAozFXiIWZDJEhwEWppRhW8UZD5pRPecW1H",
+                  "shareLink": "https://wysker.com/W2QaCfGMPwZ0gWI",
+                  "shop": {
+                    "domainName": "farfetch.com",
+                    "displayName": "Farfetch",
+                    "link": "https://wys.sh/r/3BNczRcRKFO0UuoOFq7gFUyDVP"
+                  },
+                  "statistics": {
+                    "favorited": 9761,
+                    "shopped": 7757,
+                    "shared": 7751
+                  }
+                },
+            // ...
+              ]
+            },
+            "story": {
+              "id": "W2Ljl",
+              "displayName": "🍉\nDamn Chunky Sneakers",
+              "media": {
+                "titleImage": "https://cdn.wysker.com/stories/181/cover/pw8rJJuiBR8H.jpg"
+              },
+              "author": {
+                "alias": "@alicejoyce",
+                "avatar": "https://cdn.wysker.com/avatars/34.jpg"
+              },
+              "imageCopyright": {
+                "title": "© Unsplash",
+                "link": "https://unsplash.com/photos/jj-TLWCWpck"
+              },
+              "published": "2018-05-17T13:08:12.386Z",
+              "itemCount": 84,
+              "url": "http://localhost:5000/v9/nodes/W2Ljl?query=sneakers&origin=1325",
+              "statistics": {
+                "viewed": 6350,
+                "storyShared": 5397,
+                "shared": 3942
+              },
+              "shareLink": "https://wysker.com/W2Ljl"
+            },
+            "channel": {
+              "id": "W8s",
+              "displayName": "#2 Fashion",
+              "url": "http://localhost:5000/v9/nodes/W8s?query=sneakers&origin=1325",
+              "latestStory": {
+                "id": "Wbprjs",
+                "displayName": "💥\nInspired by Yu Masuikyly",
+                "media": {
+                  "titleImage": "https://cdn.wysker.com/stories/121/cover/n3fQpIpuuCHS.jpg"
+                },
+                "author": {
+                  "alias": "@popman",
+                  "avatar": "https://cdn.wysker.com/avatars/51.jpg"
+                },
+                "imageCopyright": {
+                  "title": "© yumasui",
+                  "link": "https://www.instagram.com/p/BrzqjF0Bw5c/"
+                },
+                "published": "2019-01-24T14:02:16.114Z",
+                "itemCount": 85,
+                "url": "http://localhost:5000/v9/nodes/Wbprjs?query=sneakers&origin=1325",
+                "statistics": {
+                  "viewed": 4970,
+                  "storyShared": 6573,
+                  "shared": 1021
+                },
+                "shareLink": "https://wysker.com/Wbprjs"
+              }
+            }
+          },
+          "adjacent": {
+            "streams": {
+              "next": [
+                {
+                  "id": "W1Y7kkrk",
+                  "displayName": "Chunky Sneakers",
+                  "url": "http://localhost:5000/v9/nodes/W1Y7kkrk?query=sneakers&origin=1325"
+                },
+            // ...
+              ],
+              "previous": []
+            },
+            "stories": {
+              "next": [
+                {
+                  "id": "W2Ljk",
+                  "displayName": "🛸\nEffortless Everyday\nJewelry",
+                  "media": {
+                    "titleImage": "https://cdn.wysker.com/stories/235/large/k7ZmDf4wCePU.jpg"
+                  },
+                  "author": {
+                    "alias": "@msmichelle",
+                    "avatar": "https://cdn.wysker.com/avatars/54.jpg"
+                  },
+                  "imageCopyright": {
+                    "title": "© Unsplash",
+                    "link": "https://unsplash.com/"
+                  },
+                  "published": "2018-05-17T13:03:27.757Z",
+                  "itemCount": 105,
+                  "url": "http://localhost:5000/v9/nodes/W2Ljk?query=sneakers&origin=1325",
+                  "statistics": {
+                    "viewed": 435,
+                    "storyShared": 5420,
+                    "shared": 8214
+                  },
+                  "shareLink": "https://wysker.com/W2Ljk"
+                },
+            // ...
+              ],
+              "previous": [
+                {
+                  "id": "W2Ljn",
+                  "displayName": "🍉\nAloha, Hawaiian Shirts!",
+                  "media": {
+                    "titleImage": "https://cdn.wysker.com/stories/167/large/lCVkQ9E9sQVw.jpg"
+                  },
+                  "author": {
+                    "alias": "@tonicontura",
+                    "avatar": "https://cdn.wysker.com/avatars/70.jpg"
+                  },
+                  "imageCopyright": {
+                    "title": "© Unsplash",
+                    "link": "https://unsplash.com/"
+                  },
+                  "published": "2018-05-17T13:31:58.984Z",
+                  "itemCount": 91,
+                  "url": "http://localhost:5000/v9/nodes/W2Ljn?query=sneakers&origin=1325",
+                  "statistics": {
+                    "viewed": 5238,
+                    "storyShared": 6465,
+                    "shared": 2175
+                  },
+                  "shareLink": "https://wysker.com/W2Ljn"
+                },
+            // ...
+              ]
+            },
+            "channels": {
+              "next": [
+                {
+                  "id": "W8t",
+                  "displayName": "#3 Meta",
+                  "url": "http://localhost:5000/v9/nodes/W8t?query=sneakers&origin=1273",
+                  "latestStory": {
+                    "id": "WbpNqh",
+                    "displayName": "🍹\nBando Lifestyle Accessories",
+                    "media": {
+                      "titleImage": "https://cdn.wysker.com/stories/92/cover/mExhi66Hx3HB.jpg"
+                    },
+                    "author": {
+                      "alias": "@candysky",
+                      "avatar": "https://cdn.wysker.com/avatars/39.jpg"
+                    },
+                    "imageCopyright": {
+                      "title": "© bando",
+                      "link": "https://www.bando.com/collections/drinkware/products/deluxe-sip-sip-tumbler-w-straw-optimism"
+                    },
+                    "published": "2018-12-31T14:10:00.981Z",
+                    "itemCount": 102,
+                    "url": "http://localhost:5000/v9/nodes/WbpNqh?query=sneakers&origin=1273",
+                    "statistics": {
+                      "viewed": 746,
+                      "storyShared": 285,
+                      "shared": 3318
+                    },
+                    "shareLink": "https://wysker.com/WbpNqh"
+                  }
+                },
+            // ...
+              ],
+              "previous": [
+                {
+                  "id": "W8r",
+                  "displayName": "#1 Pop",
+                  "url": "http://localhost:5000/v9/nodes/W8r?query=sneakers&origin=1320",
+                  "latestStory": {
+                    "id": "Wbp9VM",
+                    "displayName": "👑\nThe Royal Family Starter Pack",
+                    "media": {
+                      "titleImage": "https://cdn.wysker.com/stories/243/cover/JBhrYzN1KP02.jpg"
+                    },
+                    "author": {
+                      "alias": "@catwillson",
+                      "avatar": "https://cdn.wysker.com/avatars/68.jpg"
+                    },
+                    "imageCopyright": {
+                      "title": "© wysker",
+                      "link": "wysker"
+                    },
+                    "published": "2019-01-06T14:51:00.391Z",
+                    "itemCount": 81,
+                    "url": "http://localhost:5000/v9/nodes/Wbp9VM?query=sneakers&origin=1320",
+                    "statistics": {
+                      "viewed": 8579,
+                      "storyShared": 8131,
+                      "shared": 9755
+                    },
+                    "shareLink": "https://wysker.com/Wbp9VM"
+                  }
+                }
+              ]
+            }
+          }
+        }

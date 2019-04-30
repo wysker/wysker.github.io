@@ -1,0 +1,454 @@
+## Users [/users]
+### Request verification code [POST /users/phone/{phoneNumber}/verify]
+
+Sends a text message to the specified phone number that can be used to create a new account or to recover an existing one. Can be called with a client- or user access token. The verification code is a six digit numeric value.
+
++ Parameter
+    + phoneNumber (string) - The complete phone number including the country code (+[Country Code][Area Code][Number]) with no spaces and beginning with a plus sign
+
++ Response 200 (application/json)
+
+    + Attributes (object)
+        + success (boolean) - Indicates that the request was successful and that a text message was sent
+        + phoneNumber (string) - The phone number for which the request was made
+        + retryAt (string) - An ISO 8601 date indicating when the request can be repeated
+
+    + Body
+
+        {
+            "success": true,
+            "phoneNumber": "+4928194290272",
+            "retryAt": "2019-03-15T15:53:00+00:00"
+        }
+
++ Response 400 (application/json)
+    Error returned if the verification code could not be sent because the phone number was invalid
+
+    + Body
+
+        {
+            "error": "INVALID_PHONE_NUMBER",
+            "detail": "Verification code could not be sent because the phone number was rejected"
+        }
+
++ Response 429 (application/json)
+    Error returned if a secondary request was made before the retryAt date
+
+    + Body
+
+        {
+            "error": "REQUEST_IN_PROGRESS",
+            "detail": "The request could not be completed because another request is still in progress and a retry is not yet possible"
+        }
+
+### Retrieve user details [GET /users/me]
+
+Returns the details for the account associated with the provided user access token.
+
++ Response 200 (application/json)
+
+    + Attributes (object)
+        + preferences (UserPreferences) - User preferences associated with the account
+        + inviteLink (string) - Link that can be shared to invite other users to use the app
+        + tokenBalance (string) - The account's wys token balance. Note that this is a string and not a number to preserve decimal precision.
+        + alias (string) - The user's public alias (aka username). Does not include the @-symbol.
+        + uin (number) - The users' identification number, typically displayed with a prefixed "#" (e.g. #3492).
+        + created (string) - An ISO 8601 date indicating when the user was created (the "birthday"),
+        + favoriteCount (number) - How many items are stored in the user's favorites
+        + avatar (string) - URL of a JPEG image that represents the user's avatar
+        + hasPhoneNumber (boolean) - Indicates if there is a phone number associated with the user account
+    + Body
+
+            {
+                "accessToken": "34s2sf009-28fk3hc89-dsha834m3-dsf843f",
+                "expires": 18459372,
+                "preferences": {
+                    "audience": "girls",
+                    "notificationFrequency": "daily",
+                    "soundEnabled": true,
+                    "vibrationEnabled": true,
+                    "speed": "normal",
+                    "price": "",
+                    "currency": "EUR",
+                    "country": "US"
+                },
+                "inviteLink": "https://wys.sh/f834kjsd82k",
+                "tokenBalance": "10",
+                "alias": "john19393",
+                "uin": 48929,
+                "created": "2018-04-23T18:25:43.511Z",
+                "favoriteCount": 39,
+                "avatar": "https://cdn.wysker.com/..."
+            }
+
+### Get public user profile by UIN [GET /users/uin/{uin}]
+
+Returns all public information for a user given their UIN (user identification number)
+
++ Parameters
+    + id (number) - The user's UIN
+
++ Response 200 (application/json)
+
+    + Attributes (object)
+        + tokenBalance (string) - The account's wys token balance. Note that this is a string and not a number to preserve decimal precision.
+        + alias (string) - The user's public alias (aka username). Does not include the @-symbol.
+        + uin (number) - The users' identification number, typically displayed with a prefixed "#" (e.g. #3492).
+        + created (string) - An ISO 8601 date indicating when the user was created (the "birthday"),
+        + favoriteCount (number) - How many items are stored in the user's favorites
+        + avatar (string) - URL of a JPEG image that represents the user's avatar
+
+    + Body
+
+            {
+                "tokenBalance": "10",
+                "alias": "john19393",
+                "uin": 48929,
+                "created": "2018-04-23T18:25:43.511Z",
+                "favoriteCount": 33,
+                "avatar": "https://cdn.wysker.com/..."
+            }
+
++ Response 404 (application/json)
+    Error returned if no users with the specified UIN exists
+
+    + Body
+
+            {
+                "error": "NO_SUCH_UIN",
+                "detail": "No user with that UIN is currently on record."
+            }
+
+
+
+### Get public user profile by alias [GET /users/alias/{alias}]
+
+Returns all public information for a user given their alias. This endpoint can also be used to validate if a username is still available.
+
++ Parameters
+    + alias (string) - The user's alias
+
++ Response 200 (application/json)
+
+    + Attributes (object)
+        + tokenBalance (string) - The account's wys token balance. Note that this is a string and not a number to preserve decimal precision.
+        + alias (string) - The user's public alias (aka username). Does not include the @-symbol.
+        + uin (number) - The users' identification number, typically displayed with a prefixed "#" (e.g. #3492).
+        + created (string) - An ISO 8601 date indicating when the user was created (the "birthday"),
+        + favoriteCount (number) - How many items are stored in the user's favorites
+        + avatar (string) - URL of a JPEG image that represents the user's avatar
+
+    + Body
+
+            {
+                "tokenBalance": "10",
+                "alias": "john19393",
+                "uin": 48929,
+                "created": "2018-04-23T18:25:43.511Z",
+                "favoriteCount": 48,
+                "avatar": "https://cdn.wysker.com/..."
+            }
+
++ Response 404 (application/json)
+    Error returned if no users with the specified alias exists
+
+    + Body
+
+            {
+                "error": "NO_SUCH_ALIAS",
+                "detail": "No user with that alias is currently on record."
+            }
+
+### Create new user [POST /users]
+
+Creates a new user account.
+
++ Request
+    + Attributes (object)
+        + preferences (optional, UserPreferences) - User preferences to be associated with the account
+        + pushNotificationHandle (optional, string) - The device's push notification handle
+        + devicePlatform (enum[string])
+            + Members
+                + `android`
+                + `ios`
+        + referringUser (optional, string) - Id of the referring user
+        + alias (string) - Alias of the user to be created. Must not include the @-symbol. Valid characters are any Unicode-letter character (upper- and lowecase), the numbers 0-9, "." (dot) and "\_" (underscore). "." (dot) and "\_" (underscore) cannot be the first character in an alias. Minimum length is 3, maximum length is 30.
+        + acquisition (optional, Acquisition) - Optional details on how the user was acquired
+        + verificationCode (string) - User-provided six-digit verification code
+    + Body
+
+            {
+                "preferences": {
+                    "audience": "girls"
+                },
+                "pushNotificationHandle": "A439wd9AH830erifsjGZA03hsdjkJG93jf",
+                "devicePlatform": "android",
+                "referringUser": 1383,
+                "alias": "john14829",
+                "acquisition": {
+                    "adId": "jvf92esdaid9",
+                    "campaign": "IG_FARFETCH_SALE_201"
+                },
+                "verificationCode": "392032"
+            }
+
++ Response 200 (application/json)
+The account did not previously exist but was created.
+
+    + Attributes (object)
+        + accessToken (string) - The access token
+        + expires (number) - Lifetime of the token in seconds
+        + preferences (UserPreferences) - User preferences associated with the account
+        + inviteLink (string) - Link that can be shared to invite other users to use the app
+        + tokenBalance (string) - The account's wys token balance. Note that this is a string and not a number to preserve decimal precision.
+        + alias (string) - The user's public alias (aka username). Does not include the @-symbol.
+        + uin (number) - The user's unique identification number (displayed as #48393)
+        + created (string) - An ISO 8601 date indicating when the user was created (the "birthday"),
+        + favoriteCount (number) - How many items are stored in the user's favorites
+        + avatar (string) - URL of a JPEG image that represents the user's avatar
+        + hasPhoneNumber (boolean) - Indicates if there is a phone number associated with the user account
+    + Body
+
+            {
+                "accessToken": "34s2sf009-28fk3hc89-dsha834m3-dsf843f",
+                "expires": 18459372,
+                "preferences": {
+                    "audience": "girls",
+                    "notificationFrequency": "daily",
+                    "soundEnabled": true,
+                    "vibrationEnabled": true
+                },
+                "inviteLink": "https://wys.sh/f834kjsd82k",
+                "tokenBalance": "10",
+                "alias": "john14829",
+                "uin": 389292,
+                "created": "2018-04-23T18:25:43.511Z",
+                "favoriteCount": 0,
+                "avatar": "https://cdn.wysker.com/..."
+            }
+
++ Response 409 (application/json)
+    Error returned if the specified alias is already taken.
+
+    + Body
+
+            {
+                "error": "ALIAS_ALREADY_IN_USE",
+                "detail": "The specified alias is already associated with an existing user."
+            }
+
++ Response 400 (application/json)
+    Error returned if the specified alias does not follow the above specified rules.
+
+    + Body
+
+            {
+                "error": "INVALID_ALIAS",
+                "detail": "The specified alias contains invalid characters, is too short or too long."
+            }
+
++ Response 403 (application/json)
+    Error returned if the specified verification token and code were invalid
+
+    + Body
+
+            {
+                "error": "INVALID_VERIFICATION_CODE",
+                "detail": "The specified verification token and/or code are invalid."
+            }
+
+
+### Login an existing user [POST /users/login]
+
+Retrieve a user access token for an account by providing a verification code for the user's phone number.
+
++ Request
+    + Attributes (object)
+        + verificationCode (string) - User-provided six-digit verification code
+
+    + Body
+
+            {
+                "verificationCode": "382011"
+            }
+
++ Response 200 (application/json)
+The login was successful
+
+    + Attributes (object)
+        + accessToken (string) - The access token
+        + expires (number) - Lifetime of the token in seconds
+        + preferences (UserPreferences) - User preferences associated with the account
+        + inviteLink (string) - Link that can be shared to invite other users to use the app
+        + tokenBalance (string) - The account's wys token balance. Note that this is a string and not a number to preserve decimal precision.
+        + alias (string) - The user's public alias (aka username). NOTE! The alias field may be empty for users who are recovering an existing account. If the alias is empty, the user needs to be asked to provide an alias and the "Update user" endpoint has to be invoked to save it.
+        + uin (number) - The user's unique identification number (displayed as #48393)
+        + created (string) - An ISO 8601 date indicating when the user was created (the "birthday"),
+        + favoriteCount (number) - How many items are stored in the user's favorites
+        + avatar (string) - URL of a JPEG image that represents the user's avatar
+        + hasPhoneNumber (boolean) - Indicates if there is a phone number associated with the user account
+    + Body
+
+            {
+                "accessToken": "34s2sf009-28fk3hc89-dsha834m3-dsf843f",
+                "expires": 18459372,
+                "preferences": {
+                    "audience": "girls",
+                    "notificationFrequency": "daily",
+                    "soundEnabled": true,
+                    "vibrationEnabled": true
+                },
+                "inviteLink": "https://wys.sh/f834kjsd82k",
+                "tokenBalance": "10",
+                "alias": "john284939",
+                "uin": 389353345,
+                "created": "2018-04-23T18:25:43.511Z",
+                "favoriteCount": 44,
+                "avatar": "https://cdn.wysker.com/..."
+            }
+
++ Response 403 (application/json)
+    Error returned if the specified verification token and code were invalid
+
+    + Body
+
+            {
+                "error": "INVALID_VERIFICATION_CODE",
+                "detail": "The specified verification token and/or code are invalid."
+            }
+
+### Update user  [PUT /users/me]
+Updates a user's preferences,  push notification details and optionally their alias. A *USER TOKEN* is required for this endpoint.
+
++ Request
+    + Attributes (object)
+        + preferences (optional, UserPreferences) - User preferences to be associated with the account
+        + pushNotificationHandle (optional, string) - The device's push notification handle
+        + devicePlatform (optional, enum[string])
+            + Members
+                + `android`
+                + `ios`
+        + alias (optional, string) - Associates a new alias with the account
+        + verificationCode (optional, string) - Associates a new phone number with the account by providing the corresponding verification code
+    + Body
+
+            {
+                "preferences": {
+                    "audience": "boys",
+                    "soundEabled": false
+                },
+                "pushNotificationHandle": "A439wd9AH830erifsjGZA03hsdjkJG93jf",
+                "devicePlatform": "android",
+                "alias": "john3498290"
+            }
+
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + success (boolean) - Indicates that the request was successful (always true)
+    + Body
+
+            {
+                "success": true
+            }
+
++ Response 409 (application/json)
+    Error returned if the specified alias is already taken.
+
+    + Body
+
+            {
+                "error": "ALIAS_ALREADY_IN_USE",
+                "detail": "The specified alias is already associated with an existing user."
+            }
+
++ Response 409 (application/json)
+    Error returned if the phone number assosciated with the specified verification code is already taken.
+
+    + Body
+
+            {
+                "error": "PHONE_NUMBER_ALREADY_IN_USE",
+                "detail": "The specified phone number is already associated with another user."
+            }
+
++ Response 400 (application/json)
+    Error returned if the specified alias does not follow the above specified rules.
+
+    + Body
+
+            {
+                "error": "INVALID_ALIAS",
+                "detail": "The specified alias contains invalid characters, is too short or too long."
+            }
+
+### Upload user avatar [PUT /users/me/avatar]
+
+Uploads a JPEG image to the backend to be used as a user's avatar image. The request uses the `multipart/form-data` format.
+
+Uploaded images need to be square, at least 512x512 pixels, smaller than 1280x1280 pixels and cannot exceed 500KB in size.
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + success (boolean) - Indicates that the image was successfully uploaded
+        + avatar (string) - URL of the newly uploaded avatar image in JPEG format. The image should only be cached for short periods of time to allow for asynchronous processing on the backend.
+    + Body
+
+            {
+                "success": true,
+                "avatar": "https://cdn.wysker.com/..."
+            }
+
++ Response 400 (application/json)
+    Error returned if the uploaded image has an invalid format
+
+    + Body
+
+            {
+                "error": "INVALID_IMAGE_FORMAT",
+                "detail": "The uploaded image is not of acceptable size or format."
+            }
+
++ Response 413  (application/json)
+    Error returned if the uploaded image exceeds 500KB
+
+    + Body
+
+            {
+                "error": "IMAGE_FILE_SIZE_TOO_LARGE",
+                "detail": "The uploaded image file size exceeds the limit of 500KB."
+            }
+
+### Save user's external contacts [PUT /users/me/contacts]
+
+Saves all user's contact details in a hashed manner. This endpoint expects an array of phone numbers.
+
++ Request
+    + Attributes (object)
+        + contacts (array[string]) - User's phone numbers from contact list
+    + Body
+
+            {
+                "contacts": ["+491741776655", "+491742556611"]
+            }
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + success (boolean) - Indicates that the request finished successfully
+        + totalNumbers (number) - Total amount of unique phone numbers received from the client
+        + importedNumbers (number) - Total amount of unique (and valid) phone numbers that were successfully stored in the database
+    + Body
+
+            {
+                "success": true
+            }
+
++ Response 400 (application/json)
+    Error returned if provided phone numbers are in invalid format
+
+    + Body
+
+            {
+                "error": "INVALID_CONTACT_LIST_FORMAT",
+                "detail": "Provided contact list is of invalid or unuspported format."
+            }

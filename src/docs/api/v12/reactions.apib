@@ -112,3 +112,19 @@ Marks the given reaction as deleted
                 "error": "COMMENT_TOO_LONG",
                 "detail": "Provided comment is too long."
             }
+
+### Report a reaction (as a spam) [POST /reactions/{id}/report]
+
+Reports the given reaction as spam/offending
+
++ Parameters
+    + id (string) - Unique identifier of the reaction
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + success (boolean) - Indicates that the request was successful (always true)
+    + Body
+
+            {
+                "success": true
+            }

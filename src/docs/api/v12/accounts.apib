@@ -1,78 +1,77 @@
 ## Accounts [/accounts]
-### Get recommended accounts [GET /accounts]
+### Get recommended accounts [GET /accounts/recommended]
 
 Returns a list of phone number-based recommended accounts.
 
 + Response 200 (application/json)
     + Attributes (object)
-        + id (string) - Account's WHID
-        + alias (string) - The account's public alias (aka username). Does not include the @-symbol.
-        + ain (number) - The account's identification number, typically displayed with a prefixed "#" (e.g. #3492).
-        + created (string) - An ISO 8601 date indicating when the account was created.
-        + avatar (object) - URLs of a JPEG images that represent the account's avatars
+        + accounts (array[Account]) - The recommended accounts
 
     + Body
-        [{
-            id: 'Wocgaq1I',
-            created: '2019-04-08T09:27:53.289Z',
-            ain: '56282',
-            alias: '17290196924425032051008074738882',
-            avatar: {
-                small: "https://cdn.wysker.com/...",
-                large: "https://cdn.wysker.com/..."
+    
+            {
+                "accounts": [
+                    {
+                      "id": "W5RlmfD",
+                      "ain": "18556",
+                      "url": "http://localhost:5000/v12/accounts/W5RlmfD",
+                      "displayName": null,
+                      "alias": "bobster283",
+                      "type": "standard",
+                      "avatar": {
+                        "small": "https://cdn.wysker.com/avatars/default/16.jpg",
+                        "large": "https://cdn.wysker.com/avatars/default/16.jpg"
+                      },
+                      "biography": null,
+                      "relationship": "none",
+                      "created": "2018-07-24T14:12:41.246Z"
+                    },
+                    // ...
+                ]
             }
-        },
-        {
-            id: 'WocgbwdQ',
-            created: '2019-03-08T19:17:52.121Z',
-            ain: '56285',
-            alias: '17290196924425032051008074738882',
-            avatar: {
-                small: "https://cdn.wysker.com/...",
-                large: "https://cdn.wysker.com/..."
-            }
-        }]
 
 ### Search accounts [GET /accounts]
 
-Returns a list of Accounts (max 200) that meet the search criteria.
+Returns a list of accounts (max 200) that meet the search criteria.
 Results can be filtered by account type which can be `standard`, `influencer`, `brand` or `brand_influencer`.
 This endpoint also can also return results based on a keyword search (`find` query param).
 If no `type` or `find` query params are specified, the endpoint will return 200 of the most followed accounts.
 
 + Parameters
-    + type (string, optional) - Type of the account: `standard`, `influencer`, `brand` or `brand_influencer`.
+    + type (enum[string], optional) - Type of the account
+        + Members
+            + `standard` - A normal user account
+            + `influencer` - An influencer account
+            + `brand` - A brand account
+            + `brand_influencer` - A brand- or influencer account
     + find (string, optional) - Search phrase, for example "nike", "zara".
 
 + Response 200 (application/json)
     + Attributes (object)
-        + id (string) - Account's WHID
-        + alias (string) - The account's public alias (aka username). Does not include the @-symbol.
-        + ain (number) - The account's identification number, typically displayed with a prefixed "#" (e.g. #3492).
-        + created (string) - An ISO 8601 date indicating when the account was created.
-        + avatar (object) - URLs of a JPEG images that represent the account's avatars
+        + accounts (array[Account]) - List of accounts matching the input parameters
 
     + Body
-        [{
-            id: 'Wocgaq1I',
-            created: '2019-04-08T09:27:53.289Z',
-            ain: '56282',
-            alias: '17290196924425032051008074738882',
-            avatar: {
-                small: "https://cdn.wysker.com/...",
-                large: "https://cdn.wysker.com/..."
-            }
-        },
+    
         {
-            id: 'WocgbwdQ',
-            created: '2019-03-08T19:17:52.121Z',
-            ain: '56285',
-            alias: '17290196924425032051008074738882',
-            avatar: {
-                small: "https://cdn.wysker.com/...",
-                large: "https://cdn.wysker.com/..."
-            }
-        }]
+            "accounts": [
+                {
+                  "id": "WocfQyYy",
+                  "ain": "49431",
+                  "url": "http://localhost:5000/v12/accounts/37533",
+                  "displayName": null,
+                  "alias": "Yoana❤",
+                  "type": "standard",
+                  "avatar": {
+                    "small": "https://cdn.wysker.com/avatars/default/14.jpg",
+                    "large": "https://cdn.wysker.com/avatars/default/14.jpg"
+                  },
+                  "biography": null,
+                  "relationship": "none",
+                  "created": "2019-01-19T07:50:53.859Z"
+                },
+                // ...
+            ]
+        }
 
 ### Get current account [GET /accounts/current]
 
@@ -80,19 +79,10 @@ Returns all information about the account the user is currently logged into.
 
 + Response 200 (application/json)
 
-    + Attributes (object)
-        + id (string) - Account's WHID
-        + tokenBalance (string) - The account's wys token balance. Note that this is a string and not a number to preserve decimal precision.
-        + alias (string) - The account's public alias (aka username). Does not include the @-symbol.
-        + ain (number) - The account's identification number, typically displayed with a prefixed "#" (e.g. #3492).
-        + created (string) - An ISO 8601 date indicating when the account was created (the "birthday"),
-        + inviteLink (string)
-        + level (number)
-        + trainingProgress (number)
-        + favoriteCount (number) - How many items are stored in the account's favorites
-        + avatar (object) - URLs of a JPEG images that represent the account's avatars
+    + Attributes (Account)
 
     + Body
+    
         {
             id: 'Wocgaq1I',
             tokenBalance: '0.0000',
@@ -114,37 +104,38 @@ Returns all information about the account the user is currently logged into.
 Logs the user into a new account (described by `whid`) and returns new account's information.
 
 + Parameters
-    + whid (string) - The `whid` of an account the user is switching into
+    + id (string) - WHID of an account the user is switching into
 
 + Response 200 (application/json)
 
     + Attributes (object)
-        + id (string) - Account's WHID
-        + tokenBalance (string) - The account's wys token balance. Note that this is a string and not a number to preserve decimal precision.
-        + alias (string) - The account's public alias (aka username). Does not include the @-symbol.
-        + ain (number) - The account's identification number, typically displayed with a prefixed "#" (e.g. #3492).
-        + created (string) - An ISO 8601 date indicating when the account was created (the "birthday"),
-        + inviteLink (string)
-        + level (number)
-        + trainingProgress (number)
-        + favoriteCount (number) - How many items are stored in the account's favorites
-        + avatar (object) - URLs of a JPEG images that represent the account's avatars
+        + account (Account) - The account being switched to
+        + accessToken (string) - The new access token to be used with this account
+        + expires (number) - UTC timestamp of when the token expires
 
     + Body
+    
         {
-            id: 'Wocgaq1I',
-            tokenBalance: '0.0000',
-            created: '2019-04-08T09:27:53.289Z',
-            inviteLink: 'https://wysker.com/IhrMwFT1FamiB',
-            favoriteCount: '0',
-            ain: '56282',
-            level: 1,
-            trainingProgress: 0,
-            alias: '17290196924425032051008074738882',
-            avatar: {
-                small: "https://cdn.wysker.com/...",
-                large: "https://cdn.wysker.com/..."
-            }
+          "account": {
+            "id": "Wocg7oT8",
+            "ain": "56910",
+            "url": "http://localhost:5000/v12/accounts/current",
+            "displayName": null,
+            "alias": "test.user.2",
+            "type": "standard",
+            "avatar": {
+              "small": "https://cdn.wysker.com/avatars/large/179/lbPEPFyOT6lf.jpg",
+              "large": "https://cdn.wysker.com/avatars/small/179/lbPEPFyOT6lf.jpg"
+            },
+            "biography": null,
+            "relationship": "self",
+            "tokenBalance": "0.0000",
+            "favoriteCount": 0,
+            "created": "2019-05-08T11:07:21.809Z",
+            "inviteLink": "https://wysker.com/IhrrmjmLHQreS"
+          },
+          "accessToken": "AB78le2UQBS2EAL5Lc9xiAAAAAAAAAAAAAAAAAAAAAA=",
+          "expires": 1560608108588
         }
 
 + Response 400 (application/json)
@@ -169,37 +160,35 @@ Logs the user into a new account (described by `whid`) and returns new account's
 
 ### Get users' accounts [GET /users/me/accounts]
 
-Returns all accounts the user has access to in a form of array.
+Returns all accounts the user has access to
 
 + Response 200 (application/json)
     + Attributes (object)
-        + id (string) - Account's WHID
-        + alias (string) - The account's public alias (aka username). Does not include the @-symbol.
-        + ain (number) - The account's identification number, typically displayed with a prefixed "#" (e.g. #3492).
-        + created (string) - An ISO 8601 date indicating when the account was created.
-        + avatar (object) - URLs of a JPEG images that represent the account's avatars
+        + accounts (array[Account]) - The accounts the user has access to
 
     + Body
-        [{
-            id: 'Wocgaq1I',
-            created: '2019-04-08T09:27:53.289Z',
-            ain: '56282',
-            alias: '17290196924425032051008074738882',
-            avatar: {
-                small: "https://cdn.wysker.com/...",
-                large: "https://cdn.wysker.com/..."
-            }
-        },
+    
         {
-            id: 'WocgbwdQ',
-            created: '2019-03-08T19:17:52.121Z',
-            ain: '56285',
-            alias: '17290196924425032051008074738882',
-            avatar: {
-                small: "https://cdn.wysker.com/...",
-                large: "https://cdn.wysker.com/..."
+          "accounts": [
+            {
+              "id": "Wocg7oT8",
+              "ain": "56910",
+              "url": "http://localhost:5000/v12/accounts/Wocg7oT8",
+              "displayName": null,
+              "alias": "test.user.2",
+              "type": "standard",
+              "avatar": {
+                "small": "https://cdn.wysker.com/avatars/large/179/lbPEPFyOT6lf.jpg",
+                "large": "https://cdn.wysker.com/avatars/small/179/lbPEPFyOT6lf.jpg"
+              },
+              "biography": null,
+              "relationship": "self",
+              "tokenBalance": "0.0000",
+              "favoriteCount": 0,
+              "created": "2019-05-08T11:07:21.809Z"
             }
-        }]
+          ]
+        }
 
 ### Get account by AIN [GET /accounts/ain/{ain}]
 
@@ -210,33 +199,26 @@ Returns all public information for an account given their AIN (account identific
 
 + Response 200 (application/json)
 
-    + Attributes (object)
-        + id (string) - Account's WHID
-        + tokenBalance (string) - The account's wys token balance. Note that this is a string and not a number to preserve decimal precision.
-        + alias (string) - The account's public alias (aka username). Does not include the @-symbol.
-        + ain (number) - The account's identification number, typically displayed with a prefixed "#" (e.g. #3492).
-        + created (string) - An ISO 8601 date indicating when the account was created (the "birthday"),
-        + inviteLink (string)
-        + level (number)
-        + trainingProgress (number)
-        + favoriteCount (number) - How many items are stored in the account's favorites
-        + avatar (object) - URLs of a JPEG images that represent the account's avatars
+    + Attributes (Account)
 
     + Body
+    
         {
-            id: 'Wocgaq1I',
-            tokenBalance: '0.0000',
-            created: '2019-04-08T09:27:53.289Z',
-            inviteLink: 'https://wysker.com/IhrMwFT1FamiB',
-            favoriteCount: '0',
-            ain: '56282',
-            level: 1,
-            trainingProgress: 0,
-            alias: '17290196924425032051008074738882',
-            avatar: {
-                small: "https://cdn.wysker.com/...",
-                large: "https://cdn.wysker.com/..."
-            }
+          "id": "Wocg7oT8",
+          "ain": "56910",
+          "url": "http://localhost:5000/v12/accounts/Wocg7oT8",
+          "displayName": null,
+          "alias": "test.user.2",
+          "type": "standard",
+          "avatar": {
+            "small": "https://cdn.wysker.com/avatars/large/179/lbPEPFyOT6lf.jpg",
+            "large": "https://cdn.wysker.com/avatars/small/179/lbPEPFyOT6lf.jpg"
+          },
+          "biography": null,
+          "relationship": "self",
+          "tokenBalance": "0.0000",
+          "favoriteCount": 0,
+          "created": "2019-05-08T11:07:21.809Z"
         }
 
 + Response 404 (application/json)
@@ -245,45 +227,39 @@ Returns all public information for an account given their AIN (account identific
     + Body
 
             {
-                "error": "NO_SUCH_AIN",
+                "error": "UNKNOWN_ACCOUNT",
                 "detail": "No account with that AIN is currently on record."
             }
 
-### Get public user profile by alias [GET /users/alias/{alias}]
+### Get account by alias [GET /accounts/alias/{alias}]
 
-Returns all public information for a user given their alias. This endpoint can also be used to validate if a username is still available.
+Returns all public information for an account given its alias. This endpoint can also be used to validate if a username is still available.
 
 + Parameters
-    + alias (string) - The user's alias
+    + alias (string) - The account's alias
 
 + Response 200 (application/json)
 
-    + Attributes (object)
-        + id (string) - Account's WHID
-        + tokenBalance (string) - The account's wys token balance. Note that this is a string and not a number to preserve decimal precision.
-        + alias (string) - The account's public alias (aka username). Does not include the @-symbol.
-        + ain (number) - The account's identification number, typically displayed with a prefixed "#" (e.g. #3492).
-        + created (string) - An ISO 8601 date indicating when the account was created (the "birthday"),
-        + inviteLink (string)
-        + level (number)
-        + trainingProgress (number)
-        + favoriteCount (number) - How many items are stored in the account's favorites
-        + avatar (object) - URLs of a JPEG images that represent the account's avatars
+    + Attributes (Account)
 
     + Body
+    
         {
-            id: 'Wocgaq1I',
-            tokenBalance: '0.0000',
-            created: '2019-04-08T09:27:53.289Z',
-            inviteLink: 'https://wysker.com/IhrMwFT1FamiB',
-            favoriteCount: '0',
-            ain: '56282',
-            level: 1,
-            trainingProgress: 0,
-            alias: '17290196924425032051008074738882',
-            avatar: {
-                small: "https://cdn.wysker.com/...",
-                large: "https://cdn.wysker.com/..."
+          "id": "W5Rlk08",
+          "ain": "24596",
+          "url": "http://localhost:5000/v12/accounts/W5Rlk08",
+          "displayName": null,
+          "alias": "Gucci",
+          "type": "standard",
+          "avatar": {
+            "small": "https://cdn.wysker.com/avatars/default/2.jpg",
+            "large": "https://cdn.wysker.com/avatars/default/2.jpg"
+          },
+          "biography": null,
+          "relationship": "none",
+          "tokenBalance": "3.0000",
+          "favoriteCount": 1,
+          "created": "2018-09-18T03:40:16.655Z"
         }
 
 + Response 404 (application/json)
@@ -294,6 +270,47 @@ Returns all public information for a user given their alias. This endpoint can a
             {
                 "error": "NO_SUCH_ALIAS",
                 "detail": "No account with that alias is currently on record."
+            }
+
+### Get account by id [GET /accounts/{id}]
+
+Returns all public information for an account given its ID (WHID)
+
++ Parameters
+    + id (string) - The account's WHID
+
++ Response 200 (application/json)
+
+    + Attributes (Account)
+
+    + Body
+    
+        {
+          "id": "W5Rlk08",
+          "ain": "24596",
+          "url": "http://localhost:5000/v12/accounts/W5Rlk08",
+          "displayName": null,
+          "alias": "Gucci",
+          "type": "standard",
+          "avatar": {
+            "small": "https://cdn.wysker.com/avatars/default/2.jpg",
+            "large": "https://cdn.wysker.com/avatars/default/2.jpg"
+          },
+          "biography": null,
+          "relationship": "none",
+          "tokenBalance": "3.0000",
+          "favoriteCount": 1,
+          "created": "2018-09-18T03:40:16.655Z"
+        }
+
++ Response 404 (application/json)
+    Error returned if no accounts with the specified alias exists
+
+    + Body
+
+            {
+                "error": "UNKNOWN_ACCOUNT",
+                "detail": "No account with that id is currently on record."
             }
 
 ### Upload account avatar [PUT /accounts/current/avatar]

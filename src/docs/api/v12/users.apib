@@ -322,3 +322,49 @@ Saves all user's contact details in a hashed manner. This endpoint expects an ar
                 "error": "INVALID_CONTACT_LIST_FORMAT",
                 "detail": "Provided contact list is of invalid or unuspported format."
             }
+            
+### Recover account [POST /users/recover]
+
+Retrieve a user access token for an account by providing its recovery code.
+
++ Request
+    + Attributes (object)
+        + recoveryCode (string) - Recovery code of the account that will be unlocked
+    + Body
+
+            {
+                "recoveryCode": "UgGP2dYgAfynZ$%UFxXZe9w"
+            }
+
++ Response 200 (application/json)
+The account was successfully unlocked.
+
+    + Attributes (object)
+        + accessToken (string) - The access token
+        + expires (number) - Lifetime of the token in seconds
+        + preferences (UserPreferences) - User preferences associated with the account
+        + inviteLink (string) - Link that can be shared to invite other users to use the app
+        + tokenBalance (string) - The account's wys token balance. Note that this is a string and not a number to preserve decimal precision.
+        + alias (string) - The user's public alias (aka username). NOTE! The alias field may be empty for users who are recovering an existing account. If the alias is empty, the user needs to be asked to provide an alias and the "Update user" endpoint has to be invoked to save it.
+        + uin (number) - The user's unique identification number (displayed as #48393)
+        + created (string) - An ISO 8601 date indicating when the user was created (the "birthday"),
+        + favoriteCount (number) - How many items are stored in the user's favorites
+    + Body
+
+            {
+                "accessToken": "34s2sf009-28fk3hc89-dsha834m3-dsf843f",
+                "expires": 18459372,
+                "preferences": {
+                    "audience": "girls",
+                    "notificationFrequency": "daily",
+                    "soundEnabled": true,
+                    "vibrationEnabled": true
+                },
+                "inviteLink": "https://wys.sh/f834kjsd82k",
+                "tokenBalance": "10",
+                "alias": "john284939",
+                "uin": 389353345,
+                "created": "2018-04-23T18:25:43.511Z",
+                "favoriteCount": 44
+            }
+            

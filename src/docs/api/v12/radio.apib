@@ -1,0 +1,31 @@
+## Radio [/radio]
+### Fetch songs/loops from the Radio [GET /radio{?from}]
+
+Returns a list of songs/loops from the wysker Radio. Response body also includes "remove" key which
+
++ Parameters
+    + from (number, optional) - An integer instructing the API to return songs/loops of greater sequence number
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + songs (array) - An array of songs/loops
+        + remove (array) - An array of integers of songs to be removed from the app's cache
+
+    + Body
+    
+        {
+            "songs": [{
+                "id": "13",
+                    "created": "2019-05-15T09:38:21.478Z",
+                    "duration": 8730,
+                    "location": "https://cdn.wysker.com/radio/songs/3fd0ddb3-7e01-4810-ad06-0574f92e37ee.m4a"
+                },
+                {
+                    "id": "14",
+                    "created": "2019-05-15T09:38:22.867Z",
+                    "duration": 4643,
+                    "location": "https://cdn.wysker.com/radio/songs/ba148cbb-9a6a-4554-a79f-01c314479660.m4a"
+                },
+            }],
+            "remove": ["1", "2", "3"]
+        }

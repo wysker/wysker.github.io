@@ -1,4 +1,8 @@
 # Data Structures
+## Image (object)
++ small (string) - URL of a low-resolution version of this image
++ large (string) - URL of a high-resolution version of this image
+
 ## Story (object)
 + id (string) - Unique identifier of the story
 + displayName (string) - Name of the story to be displayed in the app. May contain line breaks ("\n")
@@ -19,6 +23,7 @@
     + storyShared (number) - How often the story has been shared as an Instagram or SnapChat story
 + shareLink (string) - URL that can be used to share the referenced story
 + placeholder (Gradient) - Gradient to show before the story cover image has been loaded
++ publisher (Account) - Attributed publisher (brand or influencer) responsible for this story
 
 ## Channel (object)
 + id (string) - Unique identifier of the channel
@@ -205,6 +210,7 @@
     + shared (number) - How often the story has been shared
     + storyShared (number) - How often the story has been shared as an Instagram or SnapChat story
 + shareLink (string) - URL that can be used to share the referenced story (not available for streams)
++ publisher (Account, optional) - Attributed brand/influencer for this story
 
 ## Widget (object)
 + id (string) - Unique ID of the widget
@@ -237,30 +243,47 @@
 + creative (optional, string)
 + attributionAdId (optional, string)
 
+## Account (object)
++ id (string) - The account's unique WHID
++ ain (string) - The account identification number (unique incremental account number)
++ url (string) - URL for retrieving the account's public profile
++ displayName (string, optional) - The accounts display name to be shown instead of the alias (if present)
++ alias (string) - The account's alias
++ type (enum[string]) - Type of this account. Standard accounts can be friended (pending the account owner's approval), influencer- or brand accounts can be followed (no approval needed).
+    + Members
+        + `standard` - A normal user account
+        + `influencer` - An influencer account
+        + `brand` - A brand account
++ avatar (Image) - The account's avatar image
++ biography (string, optional) - Optional account biography
++ relationship (enum[string]) - Relationship between the requesting account and this account
+    + Members
+        + `confirmed` - A relationship between the accounts exists and has been confirmed
+        + `pending` - The current account has sent a friend request to this account, but it has not yet been accepted 
+        + `requested` - This account has sent a friend request to the current account, but it has not yet been accepted
+        + `self` - This account is identical to the account making the request                
++ tokenBalance(string, optional) - The account's wys token balance. Note that this is a string and not a number to preserve decimal precision.
++ favoriteCount (number, optional) - Number of items in the account's favorites
++ created (string, optional) - An ISO 8601 date indicating when the account was created (the "birthday")
+
 ## Reaction (object)
-+ id (string) - Unique ID of the reaction
++ id (string) - WHID of the reaction
 + type (enum[string]) - Type of the reaction
     + Members
         + `comment` - A text comment
         + `fire` - The fire emoji
+        + `lol` - A laughing tears emoji
         + `heart_eyes` - The heart eyes emoji
         + `shocked` - The shocked emoji
         + `unamused` - The unamused emoji
         + `thumbs_down` - The thumbs down emoji
+        + `puking` - A puking emoji
 + text (string) - The comment body or alternatively a textual description of the reaction emoji
-+ creator (object)
-    + id - Unqiue ID of the account that created this reaction
-    + url - API endpoint that returns a profile for this account
-    + alias - The account's alias (minus the @-sign)
-    + avatar (object) - The account's avatar
-        + small (string) - Low-resolution avatar image
-        + large (string) - High-resolution avatar image
-    + image (object) - Product image referenced by this reaction
-        + small (string) - Low-resolution product image
-        + large (string) - High-resolution product image
-    + created (string) - ISO timestamp for when the reaction was created
-    + likes (number) - Number of times the reaction was liked
-    + responses (optional, object) - Responses to this object (optional)
-        + count (number) - The total number of responses
-        + url (string) - API endpoint that returns the responses to this reaction
-        + items (optional, array[Reaction]) - Inline responses (only when the number of responses is less than 4)
++ creator (Account)    
++ image (Image) - Product image referenced by this reaction
++ created (string) - ISO timestamp for when the reaction was created
++ likes (number) - Number of times the reaction was liked
++ responses (optional, object) - Responses to this object (optional)
+    + count (number) - The total number of responses
+    + url (string) - API endpoint that returns the responses to this reaction
+    + items (optional, array[Reaction]) - Inline responses (only when the number of responses is less than 4)

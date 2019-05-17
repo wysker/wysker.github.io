@@ -1,21 +1,30 @@
-## Friends [/users/me/relationships]
-### List users friends [GET /users/me/relationships{?page,type,status}]
+## Relationships [/accounts/current/relationships]
+### List an accounts friends and followees [GET /accounts/current/relationships{?page,type,status}]
 
-Lists users' friends. List can be filtered by `status` query param which can be `confirmed`, `pending` or `requested` and by `type` which can be `standard`, `influencer` and `brand`
+Lists an account's friends and followees. List can be filtered by `status` query param which can be `confirmed`, `pending` or `requested` and by `type` which can be `standard`, `influencer`, `brand` and `brand_influencer`.
 
 + Parameters
-    + type (string) - Type of friends (accounts) to return. (`standard`, `influencer`, `brand`)
+    + type (enum[string], optional) - Type of accounts to return. If not specified, all types of accounts are returned
+        + Members
+            + `standard` - A normal user account
+            + `influencer` - An influencer account
+            + `brand` - A brand account
+            + `brand_influencer` - A brand- or influencer account
     + page (string, optional) - Page of the results
-    + status (string, optional) - Status of friends (`confirmed`, `pending`, `requested`). Defaults to `confirmed` when `status` parameter is not provided.
-
+    + status (enum[string], optional) - Status of relationships to return
+        + Members
+            + `confirmed` - A relationship between the accounts exists and has been confirmed
+            + `pending` - The current account has sent a friend request to this account, but it has not yet been accepted 
+            + `requested` - This account has sent a friend request to the current account, but it has not yet been accepted   
 
 + Response 200 (application/json)
     + Attributes (object)
-        + friends (array) - List of friends
+        + relationships (array[Account]) - List of friends
 
     + Body
+    
             {
-                "friends": [{
+                "relationships": [{
                     "id": "W8wM",
                     "friend": "20002",
                     "status": "confirmed",
@@ -39,7 +48,7 @@ Lists users' friends. List can be filtered by `status` query param which can be 
                 }]
             }
 
-### Invite a new friend [POST /users/me/relationships]
+### Invite a new friend or follow a brand/influencer [POST /account/current/relationships]
 
 Invites a new friend with a given `whid`
 
@@ -82,7 +91,7 @@ Invites a new friend with a given `whid`
                 "detail": "The two specified accounts are already in a relationship."
             }
 
-### Accept friends invitation [POST /users/me/relationships/{id}/accept]
+### Accept friends request [POST /accounts/current/relationships/{id}/accept]
 
 Accepts friend request from another user. No `POST` body is expected by this endpoint.
 
@@ -110,7 +119,7 @@ Accepts friend request from another user. No `POST` body is expected by this end
                 "detail": "The specified user does not exist"
             }
 
-### Remove user from friends list [DELETE /users/me/relationships/{id}]
+### Remove user from friends list [DELETE /accounts/current/relationships/{id}]
 
 Removes given user from friends list
 

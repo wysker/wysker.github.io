@@ -49,3 +49,61 @@ Returns stories or streams that match the specified keywords.
                 ],
                 "next": "https://api.wysker.com/..."
             }
+
+### Find recommended tags [GET /search/tags/recommended]
+
+Returns an array of recommended tags grouped by category they belong to
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + categories (array[SearchResult]) - The search results
+    + Body
+
+            {
+                {
+                    "categories": [
+                        {
+                            "displayName": "Popular",
+                            "tags": [
+                                {
+                                    "tag": "fashion",
+                                    "displayName: "Fashion",
+                                    "url": "https://api.wysker.com/v12/nodes?tag=fashion",
+                                    "media": {
+                                        smallImage: "https://cdn.wysker.com/...."
+                                    }
+                                },
+                                {
+                                    "tag": "men's",
+                                    "displayName: "Men's",
+                                    "url": "https://api.wysker.com/v12/nodes?tag=fashion",
+                                    "media": {
+                                        smallImage: "https://cdn.wysker.com/...."
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "displayName": "Popular",
+                            "tags": [
+                                {
+                                    "tag": "fashion",
+                                    "displayName: "Fashion",
+                                    "url": "https://api.wysker.com/v12/nodes?tag=fashion",
+                                    "media": {
+                                        smallImage: "https://cdn.wysker.com/...."
+                                    }
+                                },
+                                {
+                                    "tag": "men's",
+                                    "displayName: "Men's",
+                                    "url": "https://api.wysker.com/v12/nodes?tag=fashion",
+                                    "media": {
+                                        smallImage: "https://cdn.wysker.com/...."
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }

@@ -75,7 +75,7 @@ Returns the details for the account associated with the provided user access tok
 
 ### Create new user [POST /users]
 
-Creates a new user account.
+Creates a new user account. The API only allows the verification code to be checked five (5) times before rendering it as invalid and forcing to generate a new code.
 
 + Request
     + Attributes (object)
@@ -166,10 +166,19 @@ The account did not previously exist but was created.
                 "detail": "The specified verification token and/or code are invalid."
             }
 
++ Response 429 (application/json)
+    Error returned if the verfication code has been checked more that five (5) times
+
+    + Body
+
+            {
+                "error": "TOO_MANY_VERIFICATION_ATTEMPTS",
+                "detail": "Too many verification attempts against a single verification key"
+            }
 
 ### Login an existing user [POST /users/login]
 
-Retrieve a user access token for an account by providing a verification code for the user's phone number.
+Retrieve a user access token for an account by providing a verification code for the user's phone number. The API only allows the verification code to be checked five (5) times before rendering it as invalid and forcing to generate a new code.
 
 + Request
     + Attributes (object)
@@ -220,6 +229,16 @@ The login was successful
             {
                 "error": "INVALID_VERIFICATION_CODE",
                 "detail": "The specified verification token and/or code are invalid."
+            }
+
++ Response 429 (application/json)
+    Error returned if the verfication code has been checked more that five (5) times
+
+    + Body
+
+            {
+                "error": "TOO_MANY_VERIFICATION_ATTEMPTS",
+                "detail": "Too many verification attempts against a single verification key"
             }
 
 ### Update user  [PUT /users/me]
@@ -322,7 +341,7 @@ Saves all user's contact details in a hashed manner. This endpoint expects an ar
                 "error": "INVALID_CONTACT_LIST_FORMAT",
                 "detail": "Provided contact list is of invalid or unuspported format."
             }
-            
+
 ### Recover account [POST /users/recover]
 
 Retrieve a user access token for an account by providing its recovery code.
@@ -367,4 +386,3 @@ The account was successfully unlocked.
                 "created": "2018-04-23T18:25:43.511Z",
                 "favoriteCount": 44
             }
-            

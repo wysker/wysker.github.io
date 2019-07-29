@@ -1,0 +1,26 @@
+## Accounts [/accounts]
+### Get a list of available app icons [GET /accounts/current/app-icons]
+
+Returns a list of available app icons
+
++ Response 200 (application/json)
+    + Attributes (object)
+        + icons (array) - App icons
+
+    + Body
+
+            {
+                "icons": [
+                    {
+                        "id": "original",
+                        "requiredTokens": 0,
+                        "available": true
+                        },
+                        {
+                        "id": "illustration",
+                        "requiredTokens": 10,
+                        "available": true
+                        },
+                    // ...
+                ]
+            }
